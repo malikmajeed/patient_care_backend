@@ -1,0 +1,32 @@
+const DataBaseConfig = require("../config/database");
+require('dotenv').config();
+const { Sequelize } = require("sequelize");
+
+const db = new Sequelize(
+    DataBaseConfig.database,
+    DataBaseConfig.username,
+    DataBaseConfig.password,
+    {
+        host: DataBaseConfig.host,
+        port: DataBaseConfig.port,
+        dialect: DataBaseConfig.dialect,
+        logging: false
+    }
+);
+
+
+const connectDB = async () => {
+    try {
+        await db.authenticate();
+        console.log("Database connection has been established successfully.");
+    } catch (error) {
+        console.error("Unable to connect to the database:", error);
+    }
+}
+
+
+// call above function to check connection.
+// connectDB();
+
+module.exports = { db, connectDB };
+
