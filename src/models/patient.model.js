@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const db = require("../database");
+const { db } = require("../database");
 
 const Patient = db.define("PATIENT", {
     patient_ID: {
@@ -26,7 +26,7 @@ const Patient = db.define("PATIENT", {
         unique: true,
         validate: { isEmail: true }
     },
-    password_hash: {
+    password: {
         type: DataTypes.STRING,
         allowNull: false
     },

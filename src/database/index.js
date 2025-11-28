@@ -19,12 +19,16 @@ const connectDB = async () => {
     try {
         await db.authenticate();
         console.log("Database connection has been established successfully.");
+
+        // if (config.server.environment === 'development' && config.database.autoSyncDb === "true") {
+        await db.sync({ alter: true });
+        console.log('Database models synchronized.');
+
+df
     } catch (error) {
         console.error("Unable to connect to the database:", error);
     }
 }
-
-
 // call above function to check connection.
 // connectDB();
 
