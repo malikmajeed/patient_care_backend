@@ -23,8 +23,6 @@ const connectDB = async () => {
         // if (config.server.environment === 'development' && config.database.autoSyncDb === "true") {
         await db.sync({ alter: true });
         console.log('Database models synchronized.');
-
-df
     } catch (error) {
         console.error("Unable to connect to the database:", error);
     }
