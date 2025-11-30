@@ -67,10 +67,10 @@ const login = async (adminData) => {
 
 
 
-
+// update admin data
 const update = async (adminId, adminData) => {
     try {
-        const { error, value } = adminSchema.updateAdminSchema.validate(adminData);
+        const { error } = adminSchema.updateAdminSchema.validate(adminData);
         if (error) {
             throw new Error(error.details[0].message);
         }
@@ -80,13 +80,18 @@ const update = async (adminId, adminData) => {
             throw new Error("Admin not found");
         }
 
-        if (value.password) {
-            value.password_hash = await encryptPassword(value.password);
-            delete value.password;
+        if (adminData.password) {
+            adminData.password_hash = await encryptPassword(adminData.password);
+            delete adminData.password;
         }
 
-        await admin.update(value);
-        return admin;
+        const updatedAdmin = await Admin.update(adminData, {
+            where: {
+                admin_ID: adminId
+            }
+        });
+
+        return updatedAdmin;
     } catch (error) {
         throw new Error(error.message);
     }
