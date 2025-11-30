@@ -1,0 +1,37 @@
+const adminService = require("../services/admin.service");
+
+
+const signup = async (req, res) => {
+    try {
+        const admin = await adminService.create(req.body);
+        res.status(201).json(admin);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
+
+const login = async (req, res) => {
+
+    try {
+        const admin = await adminService.login(req.body);
+
+
+        res.status(200).json({
+            success: true,
+            message: "Admin logged in successfully",
+            admin
+        });
+
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
+const adminController = {
+    signup,
+    login
+};
+
+module.exports = adminController;
