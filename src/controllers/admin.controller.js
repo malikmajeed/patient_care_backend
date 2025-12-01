@@ -4,9 +4,16 @@ const adminService = require("../services/admin.service");
 const signup = async (req, res) => {
     try {
         const admin = await adminService.create(req.body);
-        res.status(201).json(admin);
+        res.status(201).json({
+            success: true,
+            message: "Admin created successfully",
+            admin
+        });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
     }
 }
 
@@ -25,7 +32,10 @@ const login = async (req, res) => {
 
 
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
     }
 }
 
@@ -39,7 +49,10 @@ const update = async (req, res) => {
             admin
         });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
     }
 }
 

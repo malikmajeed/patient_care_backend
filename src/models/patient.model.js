@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const { db } = require("../database");
+// const { username } = require("../config/database");
 
 const Patient = db.define("PATIENT", {
     patient_ID: {
@@ -15,6 +16,11 @@ const Patient = db.define("PATIENT", {
     last_name: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    username: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
     },
     gender: {
         type: DataTypes.ENUM("male", "female", "other"),
@@ -33,6 +39,10 @@ const Patient = db.define("PATIENT", {
     phone_number: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    profile_url: {
+        type: DataTypes.STRING,
+        allowNull: true
     },
     address: {
         type: DataTypes.STRING,
