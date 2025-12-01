@@ -1,30 +1,67 @@
-const PatientService = require("../services/patient.service");
+const patientService = require("../services/patient.service");
 
 
-// Create a new patient
 const signup = async (req, res) => {
     try {
-
-        const userData = req.body;
-
-        const result = await PatientService.create(userData);
-        return res.status(201).json({
+        const patient = await patientService.create(req.body);
+        res.status(201).json({
+            success: true,
             message: "Patient created successfully",
-            result
-        })
+            patient
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+}
+
+
+const login = async (req, res) => {
+
+    try {
+        const patient = await patientService.login(req.body);
+
+
+        res.status(200).json({
+            success: true,
+            message: "Patient logged in successfully",
+            patient
+        });
+
 
     } catch (error) {
-        return res.status(500).json({
-            message: "Failed to create patient",
+        res.status(500).json({
+            success: false,
             error: error.message
-        })
+        });
+    }
+}
+
+
+const update = async (req, res) => {
+    try {
+        const patient = await patientService.update(req.params.id, req.body);
+        res.status(200).json({
+            success: true,
+            message: "Patient updated successfully",
+            patient
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
     }
 }
 
 
 
-const PatientController = {
-    signup
+const patientController = {
+    signup,
+    login,
+    update
 };
 
-module.exports = PatientController;
+module.exports = patientController;
