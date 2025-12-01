@@ -1,38 +1,93 @@
+const { Op } = require("sequelize");
 const Patient = require("../models/patient.model");
-const { createPatientSchema } = require("../schema/patient.schema");
+const patientSchema = require("../schema/patient.schema");
+const { encryptPassword, comparePassword } = require("../utils/encrypt_password");
+const { generatePatientId } = require("../utils/id_genrator");
 
-
-
-const create = async (userData) => {
+// create patient
+const create = async (patientData) => {
     try {
-        const { error, value } = createPatientSchema.validate(userData);
-
+        const { error } = patientSchema.createPatientSchema.validate(patientData);
         if (error) {
             throw new Error(error.details[0].message);
         }
 
-        //temporary patient ID generation function
-        const generatePatientId = () => {
-            const randomNum = Math.floor(Math.random() * 10000)   // 0 to 9999
-                .toString()
-                .padStart(4, '0'); // ensures 4 digits
+        patientData.patient_ID = await generatePatientId();
 
-            return "PT" + randomNum;
-        };
+        patientData.password = await encryptPassword(patientData.password);
 
-        value.patient_ID = generatePatientId();
-        const patient = await Patient.create(value);
+        const patient = await Patient.create(patientData);
         return patient;
     } catch (error) {
         throw new Error(error.message);
     }
 }
 
+// login patient with username or email
+const login = async (patientData) => {
+    try {
+        const { error } = patientSchema.loginPatientSchema.validate(patientData);
+        if (error) {
+            throw new Error(error.details[0].message);
+        }
 
+        const patient = await Patient.findOne({
+            where: {
+                [Op.or]: [
+                    { username: patientData.username },
+                    { email: patientData.username }
+                ]
+            }
+        });
 
+        if (!patient) {
+            throw new Error("Invalid email or password");
+        }
 
-const PatientService = {
-    create
+        const isMatch = await comparePassword(patientData.password, patient.password);
+
+        if (!isMatch) {
+            throw new Error("Invalid email or password");
+        }
+
+        return patient;
+
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
+// update patient data
+const update = async (patientId, patientData) => {
+    try {
+        const { error } = patientSchema.updatePatientSchema.validate(patientData);
+        if (error) {
+            throw new Error(error.details[0].message);
+        }
+
+        const patient = await Patient.findByPk(patientId);
+        if (!patient) {
+            throw new Error("Patient not found");
+        }
+
+        if (patientData.password) {
+            patientData.password = await encryptPassword(patientData.password);
+        }
+
+        const updatedPatient = await Patient.update(patientData, {
+            where: {
+                patient_ID: patientId
+            }
+        });
+
+        return updatedPatient;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
+module.exports = {
+    create,
+    login,
+    update
 };
-
-module.exports = PatientService;
