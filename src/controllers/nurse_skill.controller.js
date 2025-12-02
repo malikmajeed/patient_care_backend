@@ -1,12 +1,12 @@
-const reviewService = require("../services/review.service");
+const nurseSkillService = require("../services/nurse_skill.service");
 
 const create = async (req, res) => {
     try {
-        const review = await reviewService.create(req.body);
+        const skill = await nurseSkillService.create(req.body);
         res.status(201).json({
             success: true,
-            message: "Review created successfully",
-            review
+            message: "Nurse skill created successfully",
+            skill
         });
     } catch (error) {
         res.status(400).json({
@@ -18,10 +18,10 @@ const create = async (req, res) => {
 
 const getAll = async (req, res) => {
     try {
-        const reviews = await reviewService.getAll();
+        const skills = await nurseSkillService.getAll();
         res.status(200).json({
             success: true,
-            reviews
+            skills
         });
     } catch (error) {
         res.status(500).json({
@@ -33,10 +33,10 @@ const getAll = async (req, res) => {
 
 const getById = async (req, res) => {
     try {
-        const review = await reviewService.getById(req.params.id);
+        const skill = await nurseSkillService.getById(req.params.nurseId, req.params.categoryId);
         res.status(200).json({
             success: true,
-            review
+            skill
         });
     } catch (error) {
         res.status(404).json({
@@ -48,11 +48,11 @@ const getById = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const review = await reviewService.update(req.params.id, req.body);
+        const skill = await nurseSkillService.update(req.params.nurseId, req.params.categoryId, req.body);
         res.status(200).json({
             success: true,
-            message: "Review updated successfully",
-            review
+            message: "Nurse skill updated successfully",
+            skill
         });
     } catch (error) {
         res.status(400).json({
@@ -64,10 +64,10 @@ const update = async (req, res) => {
 
 const remove = async (req, res) => {
     try {
-        await reviewService.remove(req.params.id);
+        await nurseSkillService.remove(req.params.nurseId, req.params.categoryId);
         res.status(200).json({
             success: true,
-            message: "Review deleted successfully"
+            message: "Nurse skill deleted successfully"
         });
     } catch (error) {
         res.status(404).json({

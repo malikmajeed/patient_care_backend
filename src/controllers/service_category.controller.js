@@ -1,12 +1,12 @@
-const reviewService = require("../services/review.service");
+const serviceCategoryService = require("../services/service_category.service");
 
 const create = async (req, res) => {
     try {
-        const review = await reviewService.create(req.body);
+        const category = await serviceCategoryService.create(req.body);
         res.status(201).json({
             success: true,
-            message: "Review created successfully",
-            review
+            message: "Service category created successfully",
+            category
         });
     } catch (error) {
         res.status(400).json({
@@ -18,10 +18,10 @@ const create = async (req, res) => {
 
 const getAll = async (req, res) => {
     try {
-        const reviews = await reviewService.getAll();
+        const categories = await serviceCategoryService.getAll();
         res.status(200).json({
             success: true,
-            reviews
+            categories
         });
     } catch (error) {
         res.status(500).json({
@@ -33,10 +33,10 @@ const getAll = async (req, res) => {
 
 const getById = async (req, res) => {
     try {
-        const review = await reviewService.getById(req.params.id);
+        const category = await serviceCategoryService.getById(req.params.id);
         res.status(200).json({
             success: true,
-            review
+            category
         });
     } catch (error) {
         res.status(404).json({
@@ -48,11 +48,11 @@ const getById = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const review = await reviewService.update(req.params.id, req.body);
+        const category = await serviceCategoryService.update(req.params.id, req.body);
         res.status(200).json({
             success: true,
-            message: "Review updated successfully",
-            review
+            message: "Service category updated successfully",
+            category
         });
     } catch (error) {
         res.status(400).json({
@@ -64,10 +64,10 @@ const update = async (req, res) => {
 
 const remove = async (req, res) => {
     try {
-        await reviewService.remove(req.params.id);
+        await serviceCategoryService.remove(req.params.id);
         res.status(200).json({
             success: true,
-            message: "Review deleted successfully"
+            message: "Service category deleted successfully"
         });
     } catch (error) {
         res.status(404).json({

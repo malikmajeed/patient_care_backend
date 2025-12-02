@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 const db = require("../database");
 
 const Document = db.define("DOCUMENTS", {
-    Doc_ID: {
+    doc_ID: {
         type: DataTypes.STRING(6),
         primaryKey: true,
         allowNull: false,
@@ -16,11 +16,19 @@ const Document = db.define("DOCUMENTS", {
             key: "nurse_ID"
         }
     },
-    url: {
+    attachment_url: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    type: {
+    issuing_authority: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    issue_date: {
+        type: DataTypes.DATE,
+        allowNull: false
+    },
+    document_type: {
         type: DataTypes.ENUM("certification", "diploma", "other"),
         allowNull: false
     }
