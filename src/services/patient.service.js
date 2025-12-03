@@ -86,8 +86,58 @@ const update = async (patientId, patientData) => {
     }
 }
 
+// get all patients
+const getAll = async () => {
+    try {
+        const patients = await Patient.findAll({
+            attributes: { exclude: ['password'] }
+        });
+        return patients;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
+// get patient by id
+const getById = async (patientId) => {
+    try {
+        const patient = await Patient.findByPk(patientId, {
+            attributes: { exclude: ['password'] }
+        });
+        if (!patient) {
+            throw new Error("Patient not found");
+        }
+        return patient;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
+// delete patient
+const deletePatient = async (patientId) => {
+    try {
+        const patient = await Patient.findByPk(patientId);
+        if (!patient) {
+            throw new Error("Patient not found");
+        }
+
+        await Patient.destroy({
+            where: {
+                patient_ID: patientId
+            }
+        });
+
+        return { message: "Patient deleted successfully" };
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
 module.exports = {
     create,
     login,
-    update
+    update,
+    getAll,
+    getById,
+    deletePatient
 };
