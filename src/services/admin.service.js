@@ -97,8 +97,58 @@ const update = async (adminId, adminData) => {
     }
 }
 
+// get all admins
+const getAll = async () => {
+    try {
+        const admins = await Admin.findAll({
+            attributes: { exclude: ['password_hash'] }
+        });
+        return admins;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
+// get admin by id
+const getById = async (adminId) => {
+    try {
+        const admin = await Admin.findByPk(adminId, {
+            attributes: { exclude: ['password_hash'] }
+        });
+        if (!admin) {
+            throw new Error("Admin not found");
+        }
+        return admin;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
+// delete admin
+const deleteAdmin = async (adminId) => {
+    try {
+        const admin = await Admin.findByPk(adminId);
+        if (!admin) {
+            throw new Error("Admin not found");
+        }
+
+        await Admin.destroy({
+            where: {
+                admin_ID: adminId
+            }
+        });
+
+        return { message: "Admin deleted successfully" };
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
 module.exports = {
     create,
     login,
-    update
+    update,
+    getAll,
+    getById,
+    deleteAdmin
 };
