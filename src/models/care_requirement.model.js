@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const db = require("../database");
+const { db } = require("../database");
 
 const CareRequirement = db.define("CARE_REQUIREMENT", {
     req_ID: {
