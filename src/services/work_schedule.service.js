@@ -1,5 +1,6 @@
 const WorkSchedule = require("../models/work_schedule.model");
 const workScheduleSchema = require("../schema/work_schedule.schema");
+const { generateWorkScheduleId } = require("../utils/uuid_generator");
 
 // create work schedule
 const create = async (workData) => {
@@ -9,7 +10,13 @@ const create = async (workData) => {
             throw new Error(error.details[0].message);
         }
 
-        const schedule = await WorkSchedule.create(workData);
+        // Generate unique work schedule ID
+        const work_id = await generateWorkScheduleId();
+
+        const schedule = await WorkSchedule.create({
+            work_id,
+            ...workData
+        });
         return schedule;
     } catch (error) {
         throw new Error(error.message);

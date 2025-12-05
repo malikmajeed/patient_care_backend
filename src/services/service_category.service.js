@@ -1,5 +1,6 @@
 const ServiceCategory = require("../models/service_category.model");
 const serviceCategorySchema = require("../schema/service_category.schema");
+const { generateServiceCategoryId } = require("../utils/uuid_generator");
 
 // create category
 const create = async (categoryData) => {
@@ -9,7 +10,13 @@ const create = async (categoryData) => {
             throw new Error(error.details[0].message);
         }
 
-        const category = await ServiceCategory.create(categoryData);
+        // Generate unique category ID
+        const category_ID = await generateServiceCategoryId();
+
+        const category = await ServiceCategory.create({
+            category_ID,
+            ...categoryData
+        });
         return category;
     } catch (error) {
         throw new Error(error.message);

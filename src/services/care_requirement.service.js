@@ -1,5 +1,6 @@
 const CareRequirement = require("../models/care_requirement.model");
 const careRequirementSchema = require("../schema/care_requirement.schema");
+const { generateCareRequirementId } = require("../utils/uuid_generator");
 
 // create care requirement
 const create = async (careData) => {
@@ -9,7 +10,13 @@ const create = async (careData) => {
             throw new Error(error.details[0].message);
         }
 
-        const requirement = await CareRequirement.create(careData);
+        // Generate unique care requirement ID
+        const req_ID = await generateCareRequirementId();
+
+        const requirement = await CareRequirement.create({
+            req_ID,
+            ...careData
+        });
         return requirement;
     } catch (error) {
         throw new Error(error.message);

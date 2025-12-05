@@ -1,5 +1,6 @@
 const Document = require("../models/document.model");
 const documentSchema = require("../schema/document.schema");
+const { generateDocumentId } = require("../utils/uuid_generator");
 
 // create document
 const create = async (docData) => {
@@ -9,8 +10,11 @@ const create = async (docData) => {
             throw new Error(error.details[0].message);
         }
 
+        // Generate unique document ID
+        const doc_ID = await generateDocumentId();
+
         const document = await Document.create({
-            doc_ID: docData.doc_ID,
+            doc_ID,
             nurse_ID: docData.nurse_ID,
             attachment_url: docData.url,
             issuing_authority: docData.issuing_authority,

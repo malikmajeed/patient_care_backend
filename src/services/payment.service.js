@@ -1,5 +1,6 @@
 const Payment = require("../models/payment.model");
 const paymentSchema = require("../schema/payment.schema");
+const { generatePaymentId } = require("../utils/uuid_generator");
 
 // create payment
 const create = async (paymentData) => {
@@ -9,7 +10,13 @@ const create = async (paymentData) => {
             throw new Error(error.details[0].message);
         }
 
-        const payment = await Payment.create(paymentData);
+        // Generate unique payment ID
+        const payment_ID = await generatePaymentId();
+
+        const payment = await Payment.create({
+            payment_ID,
+            ...paymentData
+        });
         return payment;
     } catch (error) {
         throw new Error(error.message);

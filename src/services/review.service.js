@@ -1,5 +1,6 @@
 const Review = require("../models/review.model");
 const reviewSchema = require("../schema/review.schema");
+const { generateReviewId } = require("../utils/uuid_generator");
 
 // create review
 const create = async (reviewData) => {
@@ -9,7 +10,13 @@ const create = async (reviewData) => {
             throw new Error(error.details[0].message);
         }
 
-        const review = await Review.create(reviewData);
+        // Generate unique review ID
+        const review_ID = await generateReviewId();
+
+        const review = await Review.create({
+            review_ID,
+            ...reviewData
+        });
         return review;
     } catch (error) {
         throw new Error(error.message);

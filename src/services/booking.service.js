@@ -1,5 +1,6 @@
 const Booking = require("../models/booking.model");
 const bookingSchema = require("../schema/booking.schema");
+const { generateBookingId } = require("../utils/uuid_generator");
 
 // create booking
 const create = async (bookingData) => {
@@ -9,7 +10,13 @@ const create = async (bookingData) => {
             throw new Error(error.details[0].message);
         }
 
-        const booking = await Booking.create(bookingData);
+        // Generate unique booking ID
+        const booking_ID = await generateBookingId();
+
+        const booking = await Booking.create({
+            booking_ID,
+            ...bookingData
+        });
         return booking;
     } catch (error) {
         throw new Error(error.message);
