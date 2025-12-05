@@ -20,6 +20,9 @@ const connectDB = async () => {
         await db.authenticate();
         console.log("Database connection has been established successfully.");
 
+        // Import all models to ensure they are registered before sync
+        require('../models');
+
         // if (config.server.environment === 'development' && config.database.autoSyncDb === "true") {
         await db.sync({ alter: true });
         console.log('Database models synchronized.');
