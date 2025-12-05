@@ -34,6 +34,8 @@ const WorkSchedule = db.define("WORK", {
         type: DataTypes.STRING,
         allowNull: false
     }
+}, {
+    freezeTableName: true
 });
 
 module.exports = WorkSchedule;

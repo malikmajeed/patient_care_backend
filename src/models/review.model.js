@@ -40,6 +40,8 @@ const Review = db.define("REVIEW", {
             key: "booking_ID"
         }
     }
+}, {
+    freezeTableName: true
 });
 
 module.exports = Review;

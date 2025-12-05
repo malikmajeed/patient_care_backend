@@ -18,6 +18,8 @@ const NurseSkill = db.define("NURSE_SKILL", {
             key: "category_ID"
         }
     }
+}, {
+    freezeTableName: true
 });
 
 module.exports = NurseSkill;

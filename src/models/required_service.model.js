@@ -18,6 +18,8 @@ const RequiredService = db.define("REQUIRED_SERVICE", {
             key: "category_ID"
         }
     }
+}, {
+    freezeTableName: true
 });
 
 module.exports = RequiredService;

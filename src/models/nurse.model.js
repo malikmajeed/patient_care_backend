@@ -65,6 +65,8 @@ const Nurse = db.define("NURSE", {
         allowNull: false,
         defaultValue: true
     }
+}, {
+    freezeTableName: true
 });
 
 module.exports = Nurse;

@@ -28,6 +28,8 @@ const CareRequirement = db.define("CARE_REQUIREMENT", {
             key: "patient_ID"
         }
     }
+}, {
+    freezeTableName: true
 });
 
 module.exports = CareRequirement;

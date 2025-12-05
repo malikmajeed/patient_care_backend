@@ -35,6 +35,8 @@ const Payment = db.define("PAYMENT", {
             key: "booking_ID"
         }
     }
+}, {
+    freezeTableName: true
 });
 
 module.exports = Payment;

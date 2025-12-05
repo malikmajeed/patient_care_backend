@@ -56,6 +56,8 @@ const Patient = db.define("PATIENT", {
         type: DataTypes.FLOAT,
         allowNull: true
     }
+}, {
+    freezeTableName: true
 });
 
 module.exports = Patient;

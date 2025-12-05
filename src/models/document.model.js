@@ -32,6 +32,8 @@ const Document = db.define("DOCUMENTS", {
         type: DataTypes.ENUM("certification", "diploma", "other"),
         allowNull: false
     }
+}, {
+    freezeTableName: true
 });
 
 module.exports = Document;

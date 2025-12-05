@@ -37,6 +37,8 @@ const Admin = db.define("ADMIN", {
         type: DataTypes.ENUM("superadmin", "manager", "staff"),
         allowNull: false
     }
+}, {
+    freezeTableName: true
 });
 
 module.exports = Admin;

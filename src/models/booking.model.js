@@ -43,6 +43,8 @@ const Booking = db.define("BOOKING", {
             key: "nurse_ID"
         }
     }
+}, {
+    freezeTableName: true
 });
 
 module.exports = Booking;

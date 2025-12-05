@@ -12,6 +12,8 @@ const ServiceCategory = db.define("SERVICE_CATEGORY", {
         type: DataTypes.STRING,
         allowNull: false
     }
+}, {
+    freezeTableName: true
 });
 
 module.exports = ServiceCategory;
