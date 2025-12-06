@@ -1,6 +1,6 @@
 const CareRequirement = require("../models/care_requirement.model");
 const careRequirementSchema = require("../schema/care_requirement.schema");
-const { generateCareRequirementId } = require("../utils/uuid_generator");
+const { generateCareRequirementId } = require("../utils/uuid_generator.utils");
 
 // create care requirement
 const create = async (careData) => {

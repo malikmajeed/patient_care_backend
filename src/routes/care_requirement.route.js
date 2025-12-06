@@ -49,7 +49,7 @@ const careRequirementController = require("../controllers/care_requirement.contr
  *       500:
  *         description: Server error
  */
-router.post("/", careRequirementController.create);
+router.post("/", authenticate, careRequirementController.create);
 
 /**
  * @swagger
@@ -63,7 +63,7 @@ router.post("/", careRequirementController.create);
  *       500:
  *         description: Server error
  */
-router.get("/", careRequirementController.getAll);
+router.get("/", authenticate, careRequirementController.getAll);
 
 /**
  * @swagger
@@ -86,7 +86,7 @@ router.get("/", careRequirementController.getAll);
  *       500:
  *         description: Server error
  */
-router.get("/:id", careRequirementController.getById);
+// router.get("/:id", careRequirementController.getById);
 
 /**
  * @swagger
@@ -128,7 +128,7 @@ router.get("/:id", careRequirementController.getById);
  *       500:
  *         description: Server error
  */
-router.patch("/:id", careRequirementController.update);
+// router.patch("/:id", authenticate, careRequirementController.update);
 
 /**
  * @swagger
@@ -151,7 +151,7 @@ router.patch("/:id", careRequirementController.update);
  *       500:
  *         description: Server error
  */
-router.delete("/:id", careRequirementController.remove);
+// router.delete("/:id", careRequirementController.remove);
 
 module.exports = router;
 

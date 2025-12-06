@@ -1,5 +1,11 @@
 const express = require("express");
 const router = express.Router();
+const { authenticate,
+    isAdmin,
+    isPatient,
+    hasAdminRole,
+    isResourceOwner,
+    optionalAuth } = require("../middlewares/auth.middleware");
 
 const adminController = require("../controllers/admin.controller");
 
@@ -77,7 +83,7 @@ router.post("/signup", adminController.signup);
  *       500:
  *         description: Server error
  */
-router.post("/login", adminController.login);
+router.post("/login", authenticate, isAdmin, adminController.login);
 
 /**
  * @swagger

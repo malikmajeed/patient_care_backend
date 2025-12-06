@@ -1,5 +1,11 @@
 const express = require("express");
 const router = express.Router();
+const { authenticate,
+    isAdmin,
+    isPatient,
+    hasAdminRole,
+    isResourceOwner,
+    optionalAuth } = require("../middlewares/auth.middleware");
 
 const bookingController = require("../controllers/booking.controller");
 
@@ -60,7 +66,7 @@ const bookingController = require("../controllers/booking.controller");
  *       500:
  *         description: Server error
  */
-router.post("/", bookingController.create);
+router.post("/", authenticate, isPatient, bookingController.create);
 
 /**
  * @swagger
@@ -74,7 +80,7 @@ router.post("/", bookingController.create);
  *       500:
  *         description: Server error
  */
-router.get("/", bookingController.getAll);
+router.get("/", authenticate, isPatient || isAdmin, bookingController.getAll);
 
 /**
  * @swagger
@@ -97,7 +103,7 @@ router.get("/", bookingController.getAll);
  *       500:
  *         description: Server error
  */
-router.get("/:id", bookingController.getById);
+router.get("/:id", authenticate, isPatient || isAdmin, bookingController.getById);
 
 /**
  * @swagger
@@ -148,7 +154,7 @@ router.get("/:id", bookingController.getById);
  *       500:
  *         description: Server error
  */
-router.patch("/:id", bookingController.update);
+router.patch("/:id", authenticate, bookingController.update);
 
 /**
  * @swagger
@@ -171,6 +177,6 @@ router.patch("/:id", bookingController.update);
  *       500:
  *         description: Server error
  */
-router.delete("/:id", bookingController.remove);
+router.delete("/:id", authenticate, bookingController.remove);
 
 module.exports = router;

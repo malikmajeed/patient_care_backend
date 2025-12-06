@@ -1,5 +1,11 @@
 const express = require("express");
 const router = express.Router();
+const { authenticate,
+    isAdmin,
+    isPatient,
+    hasAdminRole,
+    isResourceOwner,
+    optionalAuth } = require("../middlewares/auth.middleware");
 
 const documentController = require("../controllers/document.controller");
 
@@ -47,7 +53,7 @@ const documentController = require("../controllers/document.controller");
  *       500:
  *         description: Server error
  */
-router.post("/", documentController.create);
+router.post("/", authenticate, documentController.create);
 
 /**
  * @swagger

@@ -1,6 +1,6 @@
 const Document = require("../models/document.model");
 const documentSchema = require("../schema/document.schema");
-const { generateDocumentId } = require("../utils/uuid_generator");
+const { generateDocumentId } = require("../utils/uuid_generator.utils");
 
 // create document
 const create = async (docData) => {

@@ -1,6 +1,6 @@
 const Booking = require("../models/booking.model");
 const bookingSchema = require("../schema/booking.schema");
-const { generateBookingId } = require("../utils/uuid_generator");
+const { generateBookingId } = require("../utils/uuid_generator.utils");
 
 // create booking
 const create = async (bookingData) => {

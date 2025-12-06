@@ -1,5 +1,11 @@
 const express = require("express");
 const router = express.Router();
+const { authenticate,
+    isAdmin,
+    isPatient,
+    hasAdminRole,
+    isResourceOwner,
+    optionalAuth } = require("../middlewares/auth.middleware");
 
 const nurseController = require("../controllers/nurse.controller");
 
@@ -112,7 +118,7 @@ router.post("/signup", nurseController.signup);
  *       500:
  *         description: Server error
  */
-router.post("/login", nurseController.login);
+router.post("/login", authenticate, nurseController.login);
 
 /**
  * @swagger
@@ -181,7 +187,7 @@ router.post("/login", nurseController.login);
  *       500:
  *         description: Server error
  */
-router.patch("/update/:id", nurseController.update);
+router.patch("/update/:id", authenticate, isResourceOwner || hasAdminRole, nurseController.update);
 
 /**
  * @swagger
@@ -204,7 +210,7 @@ router.patch("/update/:id", nurseController.update);
  *       500:
  *         description: Server error
  */
-router.get("/:id", nurseController.getById);
+router.get("/:id", authenticate, isResourceOwner || hasAdminRole, nurseController.getById);
 
 /**
  * @swagger

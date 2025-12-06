@@ -1,5 +1,11 @@
 const express = require("express");
 const router = express.Router();
+const { authenticate,
+    isAdmin,
+    isPatient,
+    hasAdminRole,
+    isResourceOwner,
+    optionalAuth } = require("../middlewares/auth.middleware");
 
 const patientController = require("../controllers/patient.controller");
 
@@ -100,7 +106,7 @@ router.post("/signup", patientController.signup);
  *       500:
  *         description: Server error
  */
-router.post("/login", patientController.login);
+router.post("/login", authenticate, patientController.login);
 
 /**
  * @swagger
@@ -160,7 +166,7 @@ router.post("/login", patientController.login);
  *       500:
  *         description: Server error
  */
-router.patch("/update/:id", patientController.update);
+router.patch("/update/:id", authenticate, isResourceOwner || hasAdminRole, patientController.update);
 
 /**
  * @swagger
@@ -174,7 +180,7 @@ router.patch("/update/:id", patientController.update);
  *       500:
  *         description: Server error
  */
-router.get("/", patientController.getAllPatients);
+router.get("/", authenticate, isResourceOwner || hasAdminRole, patientController.getAllPatients);
 
 /**
  * @swagger
@@ -197,7 +203,7 @@ router.get("/", patientController.getAllPatients);
  *       500:
  *         description: Server error
  */
-router.get("/:id", patientController.getPatientById);
+router.get("/:id", authenticate, isResourceOwner || hasAdminRole, patientController.getPatientById);
 
 /**
  * @swagger
@@ -220,6 +226,6 @@ router.get("/:id", patientController.getPatientById);
  *       500:
  *         description: Server error
  */
-router.delete("/:id", patientController.deletePatient);
+router.delete("/:id", authenticate, isAdmin, patientController.deletePatient);
 
 module.exports = router;

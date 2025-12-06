@@ -1,6 +1,6 @@
 const ServiceCategory = require("../models/service_category.model");
 const serviceCategorySchema = require("../schema/service_category.schema");
-const { generateServiceCategoryId } = require("../utils/uuid_generator");
+const { generateServiceCategoryId } = require("../utils/uuid_generator.utils");
 
 // create category
 const create = async (categoryData) => {
