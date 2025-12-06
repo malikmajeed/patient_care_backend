@@ -1,8 +1,8 @@
 const { Op } = require("sequelize");
 const Patient = require("../models/patient.model");
 const patientSchema = require("../schema/patient.schema");
-const { encryptPassword, comparePassword } = require("../utils/encrypt_password");
-const { generatePatientId } = require("../utils/id_genrator");
+const { encryptPassword, comparePassword } = require("../utils/encrypt_password.utils");
+const { generatePatientId } = require("../utils/id_genrator.utils");
 
 // create patient
 const create = async (patientData) => {
@@ -10,6 +10,19 @@ const create = async (patientData) => {
         const { error } = patientSchema.createPatientSchema.validate(patientData);
         if (error) {
             throw new Error(error.details[0].message);
+        }
+
+        const isPatientExist = await Patient.findOne({
+            where: {
+                [Op.or]: [
+                    { username: patientData.username },
+                    { email: patientData.username }
+                ]
+            }
+        });
+
+        if (isPatientExist) {
+            throw new Error("Patient already exists");
         }
 
         patientData.patient_ID = await generatePatientId();

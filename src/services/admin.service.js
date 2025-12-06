@@ -12,6 +12,18 @@ const create = async (adminData) => {
         if (error) {
             throw new Error(error.details[0].message);
         }
+        const isAdminExist = await Admin.findOne({
+            where: {
+                [Op.or]: [
+                    { username: adminData.username },
+                    { email: adminData.username }
+                ]
+            }
+        });
+
+        if (isAdminExist) {
+            throw new Error("Admin already exists");
+        }
 
         adminData.admin_ID = await generateAdminId();
 
