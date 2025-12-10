@@ -1,6 +1,6 @@
 const WorkSchedule = require("../models/work_schedule.model");
 const workScheduleSchema = require("../schema/work_schedule.schema");
-const { generateWorkScheduleId } = require("../utils/uuid_generator");
+const { generateWorkScheduleId } = require("../utils/uuid_generator.utils");
 
 // create work schedule
 const create = async (workData) => {

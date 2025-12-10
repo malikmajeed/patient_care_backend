@@ -1,6 +1,6 @@
 const Payment = require("../models/payment.model");
 const paymentSchema = require("../schema/payment.schema");
-const { generatePaymentId } = require("../utils/uuid_generator");
+const { generatePaymentId } = require("../utils/uuid_generator.utils");
 
 // create payment
 const create = async (paymentData) => {

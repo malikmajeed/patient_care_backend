@@ -1,8 +1,8 @@
 const { Op } = require("sequelize");
 const Nurse = require("../models/nurse.model");
 const nurseSchema = require("../schema/nurse.schema");
-const { encryptPassword, comparePassword } = require("../utils/encrypt_password");
-const { generateNurseId } = require("../utils/id_genrator");
+const { encryptPassword, comparePassword } = require("../utils/encrypt_password.utils");
+const { generateNurseId } = require("../utils/id_genrator.utils");
 
 // create nurse (signup)
 const create = async (nurseData) => {

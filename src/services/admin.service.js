@@ -1,8 +1,8 @@
 const { Op } = require("sequelize");
 const Admin = require("../models/admin.model");
 const adminSchema = require("../schema/admin.schema");
-const { encryptPassword, comparePassword } = require("../utils/encrypt_password");
-const { generateAdminId } = require("../utils/id_genrator");
+const { encryptPassword, comparePassword } = require("../utils/encrypt_password.utils");
+const { generateAdminId } = require("../utils/id_genrator.utils");
 
 // create admin
 const create = async (adminData) => {

@@ -1,6 +1,6 @@
 const Review = require("../models/review.model");
 const reviewSchema = require("../schema/review.schema");
-const { generateReviewId } = require("../utils/uuid_generator");
+const { generateReviewId } = require("../utils/uuid_generator.utils");
 
 // create review
 const create = async (reviewData) => {

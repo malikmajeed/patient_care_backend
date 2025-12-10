@@ -18,18 +18,18 @@ const requiredServiceRoute = require("./required_service.route");
 
 
 // using all routes
-router.use("/patient", patientRoute);
-router.use("/admin", adminRoute);
-router.use("/nurse", nurseRoute);
-router.use("/booking", bookingRoute);
-router.use("/payment", paymentRoute);
-router.use("/review", reviewRoute);
-router.use("/service-category", serviceCategoryRoute);
-router.use("/care-requirement", careRequirementRoute);
-router.use("/document", documentRoute);
-router.use("/work-schedule", workScheduleRoute);
-router.use("/nurse-skill", nurseSkillRoute);
-router.use("/required-service", requiredServiceRoute);
+router.use("/patients", patientRoute);
+router.use("/admins", adminRoute);
+router.use("/nurses", nurseRoute);
+router.use("/bookings", bookingRoute);
+router.use("/payments", paymentRoute);
+router.use("/reviews", reviewRoute);
+router.use("/service-categories", serviceCategoryRoute);
+router.use("/care-requirements", careRequirementRoute);
+router.use("/documents", documentRoute);
+router.use("/work-schedules", workScheduleRoute);
+router.use("/nurse-skills", nurseSkillRoute);
+router.use("/required-services", requiredServiceRoute);
 
 
 
