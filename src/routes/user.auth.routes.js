@@ -1,21 +1,21 @@
 const express = require("express");
 const router = express.Router();
-const adminAuthController = require("../controllers/admin.auth.controller");
-const { authenticate, isAdmin } = require("../middlewares/auth.middleware");
+const userAuthController = require("../controllers/user.auth.controller");
+const { authenticate, isPatient } = require("../middlewares/auth.middleware");
 
 /**
  * @swagger
  * tags:
- *   name: Admin Auth
- *   description: Admin authentication endpoints
+ *   name: User Auth
+ *   description: User authentication endpoints
  */
 
 /**
  * @swagger
- * /api/auth/admin/signup:
+ * /api/auth/signup/patient:
  *   post:
- *     summary: Register a new admin
- *     tags: [Admin Auth]
+ *     summary: Register a new patient
+ *     tags: [User Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -28,6 +28,8 @@ const { authenticate, isAdmin } = require("../middlewares/auth.middleware");
  *               - password
  *               - first_name
  *               - last_name
+ *               - gender
+ *               - phone_number
  *             properties:
  *               username:
  *                 type: string
@@ -39,18 +41,23 @@ const { authenticate, isAdmin } = require("../middlewares/auth.middleware");
  *                 type: string
  *               last_name:
  *                 type: string
+ *               gender:
+ *                 type: string
+ *                 enum: [male, female, other]
+ *               phone_number:
+ *                 type: string
  *     responses:
  *       201:
- *         description: Admin created successfully
+ *         description: Patient created successfully
  */
-router.post("/signup", adminAuthController.signup);
+router.post("/patient/signup", userAuthController.signupPatient);
 
 /**
  * @swagger
- * /api/auth/admin/login:
+ * /api/auth/login:
  *   post:
- *     summary: Admin login
- *     tags: [Admin Auth]
+ *     summary: User login
+ *     tags: [User Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -58,7 +65,6 @@ router.post("/signup", adminAuthController.signup);
  *           schema:
  *             type: object
  *             required:
- *               - username
  *               - password
  *             properties:
  *               username:
@@ -75,86 +81,86 @@ router.post("/signup", adminAuthController.signup);
  *               type: string
  *               example: accessToken=abc123; HttpOnly; Secure; SameSite=Strict
  */
-router.post("/login", adminAuthController.login);
+router.post("/login", userAuthController.login);
 
 /**
  * @swagger
- * /api/auth/admin/logout:
+ * /api/auth/logout:
  *   post:
- *     summary: Admin logout
- *     tags: [Admin Auth]
+ *     summary: User logout
+ *     tags: [User Auth]
  *     responses:
  *       200:
  *         description: Logout successful
  */
-router.post("/logout", adminAuthController.logout);
+router.post("/logout", userAuthController.logout);
 
 /**
  * @swagger
- * /api/auth/admin/refresh:
+ * /api/auth/refresh:
  *   post:
  *     summary: Refresh access token
- *     tags: [Admin Auth]
+ *     tags: [User Auth]
  *     responses:
  *       200:
  *         description: Token refreshed successfully
  */
-router.post("/refresh", adminAuthController.refreshToken);
+router.post("/refresh", userAuthController.refreshToken);
 
 /**
  * @swagger
- * /api/auth/admin/logout-all:
+ * /api/auth/logout-all:
  *   post:
  *     summary: Logout from all devices
- *     tags: [Admin Auth]
+ *     tags: [User Auth]
  *     security:
  *       - cookieAuth: []
  *     responses:
  *       200:
  *         description: Logged out from all devices
  */
-router.post("/logout-all", authenticate, isAdmin, adminAuthController.logoutAll);
+router.post("/logout-all", authenticate, userAuthController.logoutAll);
 
 /**
  * @swagger
- * /api/auth/admin/profile:
+ * /api/auth/profile:
  *   get:
- *     summary: Get current admin profile
- *     tags: [Admin Auth]
+ *     summary: Get current user profile
+ *     tags: [User Auth]
  *     security:
  *       - cookieAuth: []
  *     responses:
  *       200:
- *         description: Admin profile retrieved
+ *         description: User profile retrieved
  */
-router.get("/profile", authenticate, isAdmin, adminAuthController.getProfile);
+router.get("/profile", authenticate, userAuthController.getProfile);
 
 /**
  * @swagger
- * /api/auth/admin/sessions:
+ * /api/auth/sessions:
  *   get:
  *     summary: Get active sessions
- *     tags: [Admin Auth]
+ *     tags: [User Auth]
  *     security:
  *       - cookieAuth: []
  *     responses:
  *       200:
  *         description: Active sessions retrieved
  */
-router.get("/sessions", authenticate, isAdmin, adminAuthController.getSessions);
+router.get("/sessions", authenticate, userAuthController.getSessions);
 
 /**
  * @swagger
- * /api/auth/admin/verify:
+ * /api/auth/verify:
  *   get:
  *     summary: Verify authentication status
- *     tags: [Admin Auth]
+ *     tags: [User Auth]
  *     security:
  *       - cookieAuth: []
  *     responses:
  *       200:
  *         description: Authentication verified
  */
-router.get("/verify", authenticate, isAdmin, adminAuthController.verifyAuth);
+router.get("/verify", authenticate, userAuthController.verifyAuth);
 
 module.exports = router;
