@@ -28,8 +28,8 @@ app.get('/api/health', (req, res) => {
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 
 // Auth Routes
-app.use('/api/auth/admin', require('./routes/admin.auth.routes'));
-app.use('/api/auth/patient', require('./routes/patient.auth.routes'));
+app.use('/api/auth', require('./routes/user.auth.routes'));
+// app.use('/api/auth/patient', require('./routes/patient.auth.routes'));
 
 // Global Error Handler
 app.use((err, req, res, next) => {

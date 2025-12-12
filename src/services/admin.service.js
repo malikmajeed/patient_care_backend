@@ -2,6 +2,7 @@ const { Op } = require("sequelize");
 const Admin = require("../models/admin.model");
 const User = require("../models/user.model");
 const adminSchema = require("../schema/admin.schema");
+const userSchema = require("../schema/user.schema");
 const { encryptPassword, comparePassword } = require("../utils/encrypt_password.utils");
 const { generateAdminId, generateUserId } = require("../utils/id_genrator.utils");
 
@@ -9,7 +10,12 @@ const { generateAdminId, generateUserId } = require("../utils/id_genrator.utils"
 // create admin
 const create = async (adminData) => {
     try {
+
         adminData.role = "superadmin"; // Default internal role if not provided? Schema says required.
+        const { error: userError } = userSchema.createUserSchema.validate(adminData);
+        if (userError) {
+            throw new Error(userError.details[0].message);
+        }
         const { error } = adminSchema.createAdminSchema.validate(adminData);
         if (error) {
             throw new Error(error.details[0].message);

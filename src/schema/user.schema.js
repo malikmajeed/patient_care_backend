@@ -28,8 +28,11 @@ const updateUserSchema = Joi.object({
     profile_url: Joi.string().uri().optional().allow(null, '')
 }).min(1);
 
-module.exports = {
+const userSchema = {
     createUserSchema,
     loginUserSchema,
     updateUserSchema
 };
+
+
+module.exports = userSchema;

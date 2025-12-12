@@ -50,11 +50,11 @@ const { authenticate } = require("../middlewares/auth.middleware");
  *       201:
  *         description: Patient created successfully
  */
-router.post("/patient/signup", userAuthController.signupPatient);
+router.post("/signup/patient", userAuthController.signupPatient);
 
 /**
  * @swagger
- * /api/auth/admin/signup:
+ * /api/auth/signup/admin:
  *   post:
  *     summary: Register a new admin
  *     tags: [User Auth]
@@ -69,7 +69,9 @@ router.post("/patient/signup", userAuthController.signupPatient);
  *               - email
  *               - password
  *               - first_name
- *               - last_name
+ *               - last_name   
+ *               - gender
+ *               - phone_number
  *             properties:
  *               username:
  *                 type: string
@@ -77,15 +79,24 @@ router.post("/patient/signup", userAuthController.signupPatient);
  *                 type: string
  *               password:
  *                 type: string
+ *               first_name:
+ *                 type: string
+ *               last_name:
+ *                 type: string
+ *               gender:
+ *                 type: string
+ *                 enum: [male, female, other]
+ *               phone_number:
+ *                 type: string
  *     responses:
  *       201:
  *         description: Admin created successfully
  */
-router.post("/admin/signup", userAuthController.signupAdmin);
+router.post("/signup/admin", userAuthController.signupAdmin);
 
 /**
  * @swagger
- * /api/auth/nurse/signup:
+ * /api/auth/signup/nurse:
  *   post:
  *     summary: Register a new nurse
  *     tags: [User Auth]
@@ -100,16 +111,33 @@ router.post("/admin/signup", userAuthController.signupAdmin);
  *               - password
  *               - first_name
  *               - last_name
+ *               - gender
+ *               - phone_number
+ *               - experience_level
  *             properties:
+ *               username:
+ *                 type: string
  *               email:
  *                 type: string
  *               password:
  *                 type: string
+ *               first_name:
+ *                 type: string
+ *               last_name:
+ *                 type: string
+ *               gender:
+ *                 type: string
+ *                 enum: [male, female, other]
+ *               phone_number:
+ *                 type: string
+ *               experience_level:
+ *                 type: string
+ *                 enum: [beginner, intermediate, expert]
  *     responses:
  *       201:
  *         description: Nurse created successfully
  */
-router.post("/nurse/signup", userAuthController.signupNurse);
+router.post("/signup/nurse", userAuthController.signupNurse);
 
 /**
  * @swagger

@@ -1,37 +1,6 @@
 
 const nurseService = require("../services/nurse.service");
 
-const signup = async (req, res) => {
-    try {
-        const nurse = await nurseService.create(req.body);
-        res.status(201).json({
-            success: true,
-            message: "Nurse created successfully",
-            nurse
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            error: error.message
-        });
-    }
-};
-
-const login = async (req, res) => {
-    try {
-        const nurse = await nurseService.login(req.body);
-        res.status(200).json({
-            success: true,
-            message: "Nurse logged in successfully",
-            nurse
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            error: error.message
-        });
-    }
-};
 
 const update = async (req, res) => {
     try {
@@ -95,8 +64,6 @@ const remove = async (req, res) => {
 };
 
 module.exports = {
-    signup,
-    login,
     update,
     getById,
     getAll,

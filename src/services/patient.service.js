@@ -2,6 +2,7 @@ const { Op } = require("sequelize");
 const Patient = require("../models/patient.model");
 const User = require("../models/user.model");
 const patientSchema = require("../schema/patient.schema");
+const userSchema = require("../schema/user.schema");
 const { encryptPassword, comparePassword } = require("../utils/encrypt_password.utils");
 const { generatePatientId, generateUserId } = require("../utils/id_genrator.utils");
 
@@ -9,6 +10,10 @@ const { generatePatientId, generateUserId } = require("../utils/id_genrator.util
 // create patient
 const create = async (patientData) => {
     try {
+        const { error: userError } = userSchema.createUserSchema.validate(patientData);
+        if (userError) {
+            throw new Error(userError.details[0].message);
+        }
         const { error } = patientSchema.createPatientSchema.validate(patientData);
         if (error) {
             throw new Error(error.details[0].message);
