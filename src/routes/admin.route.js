@@ -10,74 +10,7 @@ const adminController = require("../controllers/admin.controller");
  *   description: Admin management
  */
 
-/**
- * @swagger
- * /admin/signup:
- *   post:
- *     summary: Create a new admin
- *     tags: [Admin]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - username
- *               - first_name
- *               - last_name
- *               - email
- *               - password
- *               - role
- *             properties:
- *               username:
- *                 type: string
- *               first_name:
- *                 type: string
- *               last_name:
- *                 type: string
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *               role:
- *                 type: string
- *                 enum: [superadmin, manager, staff]
- *     responses:
- *       201:
- *         description: Admin created successfully
- *       500:
- *         description: Server error
- */
-router.post("/signup", adminController.signup);
 
-/**
- * @swagger
- * /admin/login:
- *   post:
- *     summary: Login admin
- *     tags: [Admin]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - username
- *               - password
- *             properties:
- *               username:
- *                 type: string
- *               password:
- *                 type: string
- *     responses:
- *       200:
- *         description: Admin logged in successfully
- *       500:
- *         description: Server error
- */
-router.post("/login", adminController.login);
 
 /**
  * @swagger

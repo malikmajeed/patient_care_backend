@@ -7,32 +7,42 @@ const nurseService = require("../services/nurse.service");
  * Handle Signup based on role
  */
 const signup = async (req, res) => {
+    // This function is deprecated in favor of specific signup methods
+    // or we can implement a generic one if 'role' is passed.
+    res.status(405).json({ message: "Use role-specific signup endpoints" });
+};
+
+/**
+ * Signup Admin Wrapper
+ */
+const signupAdmin = async (req, res) => {
     try {
-        const { role } = req.body; // Expect role in body or determine by endpoint?
-        // Assuming this controller handles generic signup if we pass role, 
-        // OR we can export specific signup functions if needed.
-        // For Patient Auth Controller replacement, we stick to Patient Logic or Generic logic?
-        // The user asked to "update patient.auth.controller.js to a centralized user.auth.controller.js"
-        // I will implement a generic structure where possible, but if the route calls 'signup', it probably expects patient signup
-        // UNLESS the route is also updated to be generic. 
-        // Let's assume this controller methods will replace specific ones.
-
-        // However, since we are replacing 'patient.auth.controller', let's make it generic 'user.auth.controller'
-        // But the previous file had 'signup' which called 'patientService.create'.
-
-        let user;
-        // If we want a truly centralized signup, we need to know the target role.
-        // If the frontend calls /api/auth/register with a 'role' param, great.
-        // But existing patient signup didn't require 'role' in body because it was hit on /patient/signup.
-
-        // I will keep the original logic for patient signup if called via patient route, 
-        // OR I can export 'signupPatient', 'signupAdmin', etc within this centralized controller.
-
-        // Let's export specific signups and a generic login.
+        const admin = await adminService.create(req.body);
+        res.status(201).json({
+            success: true,
+            message: "Admin account created successfully",
+            admin
+        });
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });
     }
-}
+};
+
+/**
+ * Signup Nurse Wrapper
+ */
+const signupNurse = async (req, res) => {
+    try {
+        const nurse = await nurseService.create(req.body);
+        res.status(201).json({
+            success: true,
+            message: "Nurse account created successfully",
+            nurse
+        });
+    } catch (error) {
+        res.status(400).json({ success: false, message: error.message });
+    }
+};
 
 
 /**
@@ -283,5 +293,7 @@ module.exports = {
     getProfile,
     getSessions,
     verifyAuth,
-    signupPatient
+    signupPatient,
+    signupAdmin,
+    signupNurse
 };

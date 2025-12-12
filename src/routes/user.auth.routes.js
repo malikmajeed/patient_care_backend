@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const userAuthController = require("../controllers/user.auth.controller");
-const { authenticate, isPatient } = require("../middlewares/auth.middleware");
+const { authenticate } = require("../middlewares/auth.middleware");
 
 /**
  * @swagger
@@ -51,6 +51,65 @@ const { authenticate, isPatient } = require("../middlewares/auth.middleware");
  *         description: Patient created successfully
  */
 router.post("/patient/signup", userAuthController.signupPatient);
+
+/**
+ * @swagger
+ * /api/auth/admin/signup:
+ *   post:
+ *     summary: Register a new admin
+ *     tags: [User Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - email
+ *               - password
+ *               - first_name
+ *               - last_name
+ *             properties:
+ *               username:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Admin created successfully
+ */
+router.post("/admin/signup", userAuthController.signupAdmin);
+
+/**
+ * @swagger
+ * /api/auth/nurse/signup:
+ *   post:
+ *     summary: Register a new nurse
+ *     tags: [User Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *               - first_name
+ *               - last_name
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Nurse created successfully
+ */
+router.post("/nurse/signup", userAuthController.signupNurse);
 
 /**
  * @swagger
