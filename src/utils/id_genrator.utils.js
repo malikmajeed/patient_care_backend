@@ -1,6 +1,7 @@
 const Admin = require("../models/admin.model");
 const Patient = require("../models/patient.model");
 const Nurse = require("../models/nurse.model");
+const User = require("../models/user.model");
 
 const generateId = async (model, prefix, idField) => {
     try {
@@ -45,8 +46,13 @@ const generateNurseId = async () => {
     return await generateId(Nurse, 'NR', 'nurse_ID');
 };
 
+const generateUserId = async () => {
+    return await generateId(User, 'USR', 'user_ID');
+};
+
 module.exports = {
     generateAdminId,
     generatePatientId,
-    generateNurseId
+    generateNurseId,
+    generateUserId
 };

@@ -8,31 +8,14 @@ const Nurse = db.define("NURSE", {
         allowNull: false,
         unique: true
     },
-    first_name: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    last_name: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    gender: {
-        type: DataTypes.ENUM("male", "female", "other"),
-        allowNull: false
-    },
-    email: {
-        type: DataTypes.STRING,
+    user_ID: {
+        type: DataTypes.STRING(10),
         allowNull: false,
         unique: true,
-        validate: { isEmail: true }
-    },
-    password_hash: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    phone_number: {
-        type: DataTypes.STRING,
-        allowNull: false
+        references: {
+            model: 'USER',
+            key: 'user_ID'
+        }
     },
     address: {
         type: DataTypes.STRING,

@@ -7,31 +7,14 @@ const Admin = db.define("ADMIN", {
         primaryKey: true,
         allowNull: false
     },
-    username: {
-        type: DataTypes.STRING,
+    user_ID: {
+        type: DataTypes.STRING(10),
         allowNull: false,
-        unique: true
-    },
-    first_name: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    last_name: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true
-    },
-    profile_url: {
-        type: DataTypes.STRING,
-        allowNull: true
-    },
-    password_hash: {
-        type: DataTypes.STRING,
-        allowNull: false
+        unique: true,
+        references: {
+            model: 'USER',
+            key: 'user_ID'
+        }
     },
     role: {
         type: DataTypes.ENUM("superadmin", "manager", "staff"),

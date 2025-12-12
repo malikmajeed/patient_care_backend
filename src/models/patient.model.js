@@ -9,40 +9,14 @@ const Patient = db.define("PATIENT", {
         allowNull: false,
         unique: true
     },
-    first_name: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    last_name: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    username: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true
-    },
-    gender: {
-        type: DataTypes.ENUM("male", "female", "other"),
-        allowNull: false
-    },
-    email: {
-        type: DataTypes.STRING,
+    user_ID: {
+        type: DataTypes.STRING(10),
         allowNull: false,
         unique: true,
-        validate: { isEmail: true }
-    },
-    password: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    phone_number: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    profile_url: {
-        type: DataTypes.STRING,
-        allowNull: true
+        references: {
+            model: 'USER',
+            key: 'user_ID'
+        }
     },
     address: {
         type: DataTypes.STRING,

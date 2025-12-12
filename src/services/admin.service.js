@@ -1,39 +1,75 @@
 const { Op } = require("sequelize");
 const Admin = require("../models/admin.model");
+const User = require("../models/user.model");
 const adminSchema = require("../schema/admin.schema");
 const { encryptPassword, comparePassword } = require("../utils/encrypt_password.utils");
-const { generateAdminId } = require("../utils/id_genrator.utils");
+const { generateAdminId, generateUserId } = require("../utils/id_genrator.utils");
 
+// create admin
 // create admin
 const create = async (adminData) => {
     try {
-        adminData.role = "superadmin";
+        adminData.role = "superadmin"; // Default internal role if not provided? Schema says required.
         const { error } = adminSchema.createAdminSchema.validate(adminData);
         if (error) {
             throw new Error(error.details[0].message);
         }
-        const isAdminExist = await Admin.findOne({
+
+        // Check if user exists
+        const isUserExist = await User.findOne({
             where: {
                 [Op.or]: [
                     { username: adminData.username },
-                    { email: adminData.username }
+                    { email: adminData.email }
                 ]
             }
         });
 
-        if (isAdminExist) {
-            throw new Error("Admin already exists");
+        if (isUserExist) {
+            throw new Error("User with this username or email already exists");
         }
 
+        const userId = await generateUserId();
+        const hashedPassword = await encryptPassword(adminData.password);
+
+        // Create User
+        const user = await User.create({
+            user_ID: userId,
+            username: adminData.username,
+            email: adminData.email,
+            password_hash: hashedPassword,
+            first_name: adminData.first_name,
+            last_name: adminData.last_name,
+            profile_url: adminData.profile_url,
+            role: 'admin',
+            is_verified: true
+        });
+
+        // Create Admin Profile
         adminData.admin_ID = await generateAdminId();
+        adminData.user_ID = userId;
 
-
-        adminData.password_hash = await encryptPassword(adminData.password);
+        // Remove auth and profile fields not in Admin model
         delete adminData.password;
-
+        delete adminData.email;
+        delete adminData.username;
+        delete adminData.first_name;
+        delete adminData.last_name;
+        delete adminData.profile_url;
 
         const admin = await Admin.create(adminData);
-        return admin;
+
+        // Return combined object
+        return {
+            ...admin.toJSON(),
+            username: user.username,
+            email: user.email,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            profile_url: user.profile_url,
+            role: admin.role,
+            user_role: user.role
+        };
     } catch (error) {
         throw new Error(error.message);
     }
@@ -41,16 +77,16 @@ const create = async (adminData) => {
 
 // login admin with username and email
 
+// login admin with username or email
 const login = async (adminData) => {
     try {
         const { error } = adminSchema.loginAdminSchema.validate(adminData);
         if (error) {
-            throw new Error("Validation Error", error.details[0].message);
+            throw new Error(error.details[0].message); // Fix "Validation Error" double message
         }
 
-
-        // find admin by username or email and password
-        const admin = await Admin.findOne({
+        // find user by username or email
+        const user = await User.findOne({
             where: {
                 [Op.or]: [
                     { username: adminData.username },
@@ -59,17 +95,36 @@ const login = async (adminData) => {
             }
         });
 
-        if (!admin) {
+        if (!user) {
             throw new Error("Invalid username or password");
         }
 
-        const isMatch = await comparePassword(adminData.password, admin.password_hash);
+        const isMatch = await comparePassword(adminData.password, user.password_hash);
 
         if (!isMatch) {
             throw new Error("Invalid username or password");
         }
 
-        return admin;
+        // Find Admin profile
+        const admin = await Admin.findOne({
+            where: { user_ID: user.user_ID }
+        });
+
+        if (!admin) {
+            throw new Error("Admin profile not found");
+        }
+
+        return {
+            ...admin.toJSON(),
+            email: user.email,
+            username: user.username,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            profile_url: user.profile_url,
+            role: admin.role,
+            password_hash: user.password_hash,
+            user_ID: user.user_ID
+        };
 
     } catch (error) {
         throw new Error(error.message);
@@ -92,9 +147,36 @@ const update = async (adminId, adminData) => {
             throw new Error("Admin not found");
         }
 
+        const updatesToUser = {};
         if (adminData.password) {
-            adminData.password_hash = await encryptPassword(adminData.password);
+            updatesToUser.password_hash = await encryptPassword(adminData.password);
             delete adminData.password;
+        }
+        if (adminData.email) {
+            updatesToUser.email = adminData.email;
+            delete adminData.email;
+        }
+        if (adminData.username) {
+            updatesToUser.username = adminData.username;
+            delete adminData.username;
+        }
+        if (adminData.first_name) {
+            updatesToUser.first_name = adminData.first_name;
+            delete adminData.first_name;
+        }
+        if (adminData.last_name) {
+            updatesToUser.last_name = adminData.last_name;
+            delete adminData.last_name;
+        }
+        if (adminData.profile_url !== undefined) {
+            updatesToUser.profile_url = adminData.profile_url;
+            delete adminData.profile_url;
+        }
+
+        if (Object.keys(updatesToUser).length > 0) {
+            await User.update(updatesToUser, {
+                where: { user_ID: admin.user_ID }
+            });
         }
 
         const updatedAdmin = await Admin.update(adminData, {
@@ -113,9 +195,27 @@ const update = async (adminId, adminData) => {
 const getAll = async () => {
     try {
         const admins = await Admin.findAll({
-            attributes: { exclude: ['password_hash'] }
+            include: [{
+                model: User,
+                attributes: ['email', 'username', 'first_name', 'last_name', 'profile_url', 'role', 'is_verified', 'is_active']
+            }]
         });
-        return admins;
+
+        return admins.map(admin => {
+            const adminJson = admin.toJSON();
+            if (adminJson.USER) {
+                adminJson.email = adminJson.USER.email;
+                adminJson.username = adminJson.USER.username;
+                adminJson.first_name = adminJson.USER.first_name;
+                adminJson.last_name = adminJson.USER.last_name;
+                adminJson.profile_url = adminJson.USER.profile_url;
+                adminJson.user_role = adminJson.USER.role;
+                adminJson.is_verified = adminJson.USER.is_verified;
+                adminJson.is_active = adminJson.USER.is_active;
+                delete adminJson.USER;
+            }
+            return adminJson;
+        });
     } catch (error) {
         throw new Error(error.message);
     }
@@ -125,12 +225,28 @@ const getAll = async () => {
 const getById = async (adminId) => {
     try {
         const admin = await Admin.findByPk(adminId, {
-            attributes: { exclude: ['password_hash'] }
+            include: [{
+                model: User,
+                attributes: ['email', 'username', 'first_name', 'last_name', 'profile_url', 'role', 'is_verified', 'is_active']
+            }]
         });
         if (!admin) {
             throw new Error("Admin not found");
         }
-        return admin;
+
+        const adminJson = admin.toJSON();
+        if (adminJson.USER) {
+            adminJson.email = adminJson.USER.email;
+            adminJson.username = adminJson.USER.username;
+            adminJson.first_name = adminJson.USER.first_name;
+            adminJson.last_name = adminJson.USER.last_name;
+            adminJson.profile_url = adminJson.USER.profile_url;
+            adminJson.user_role = adminJson.USER.role;
+            adminJson.is_verified = adminJson.USER.is_verified;
+            adminJson.is_active = adminJson.USER.is_active;
+            delete adminJson.USER;
+        }
+        return adminJson;
     } catch (error) {
         throw new Error(error.message);
     }

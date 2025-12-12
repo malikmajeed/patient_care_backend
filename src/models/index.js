@@ -12,6 +12,18 @@ const RequiredService = require('./required_service.model');
 const Document = require('./document.model');
 const WorkSchedule = require('./work_schedule.model');
 const Session = require('./session.model');
+const User = require('./user.model');
+
+// Associations
+User.hasOne(Admin, { foreignKey: 'user_ID' });
+Admin.belongsTo(User, { foreignKey: 'user_ID' });
+
+User.hasOne(Patient, { foreignKey: 'user_ID' });
+Patient.belongsTo(User, { foreignKey: 'user_ID' });
+
+User.hasOne(Nurse, { foreignKey: 'user_ID' });
+Nurse.belongsTo(User, { foreignKey: 'user_ID' });
+
 
 module.exports = {
     Admin,
@@ -26,5 +38,6 @@ module.exports = {
     RequiredService,
     Document,
     WorkSchedule,
-    Session
+    Session,
+    User
 };
