@@ -2,10 +2,6 @@ const authService = require("../services/auth.service");
 const patientService = require("../services/patient.service");
 const adminService = require("../services/admin.service");
 const nurseService = require("../services/nurse.service");
-const User = require("../models/user.model");
-const Patient = require("../models/patient.model");
-const Admin = require("../models/admin.model");
-const Nurse = require("../models/nurse.model");
 /**
  * Handle Signup based on role
  */
@@ -48,81 +44,20 @@ const signupNurse = async (req, res) => {
 };
 
 
+const userService = require("../services/user.services");
+
 /**
  * Generic Login
  */
 const login = async (req, res) => {
     try {
-        // We need to try login against different services or use a unified user service?
-        // The services (patientService, adminService) now use User model interally.
-        // But 'patientService.login' handles the logic of finding User AND Patient profile.
-        // If we want a centralized login, we probably want to find the User first, then fetch the profile.
-        // BUT, currently the services do that.
-        // So for now, we might need to know "who" is logging in to call the right service 
-        // OR we try to find the User, check the role, and then fetch the profile.
-
-        // Let's try to implement a smart login that detects the user type.
         const { username, password } = req.body;
 
-        // We can't use Service.login directly without knowing the service.
-        // But we can use the User model directly!
-        const User = require("../models/user.model");
-        const { comparePassword } = require("../utils/encrypt_password.utils");
-        const { Op } = require("sequelize");
-
-        const user = await User.findOne({
-            where: {
-                [Op.or]: [
-                    { username: username || '' }, // if username provided
-                    { email: username || '' } // allow username field to be email
-                ]
-            }
-        });
-
-
-
-        if (!user) {
-            return res.status(401).json({ success: false, message: "Invalid credentials" });
-        }
-
-        const isMatch = await comparePassword(password, user.password_hash);
-        if (!isMatch) {
-            return res.status(401).json({ success: false, message: "Invalid credentials" });
-        }
-
-        // Now fetch full profile based on role
-        let fullProfile;
-        if (user.role === 'patient') {
-            fullProfile = await patientService.getById(user.user_ID); // Wait, ID logic might differ? 
-
-            const Patient = require("../models/patient.model");
-            const patient = await Patient.findOne({ where: { user_ID: user.user_ID } });
-            if (patient) fullProfile = { ...patient.toJSON(), ...user.toJSON() }; // merged
-        } else if (user.role === 'admin' || user.role === 'superadmin') {
-            const Admin = require("../models/admin.model");
-            const admin = await Admin.findOne({ where: { user_ID: user.user_ID } });
-            if (admin) fullProfile = { ...admin.toJSON(), ...user.toJSON() };
-        } else if (user.role === 'nurse') {
-            const Nurse = require("../models/nurse.model");
-            const nurse = await Nurse.findOne({ where: { user_ID: user.user_ID } });
-            if (nurse) fullProfile = { ...nurse.toJSON(), ...user.toJSON() };
-        }
-
-
-
-        // Clean up sensitive fields
-        if (fullProfile) {
-            delete fullProfile.password;
-            delete fullProfile.password_hash;
-            delete fullProfile.USER; // if included
-        } else {
-            // Fallback if profile missing (shouldn't happen)
-            fullProfile = user.toJSON();
-            delete fullProfile.password_hash;
-        }
+        // Delegate business logic to user service
+        const { user, role } = await userService.login({ username, password });
 
         // Handle Session & Cookies
-        const result = await authService.handleLogin(fullProfile, user.role, res, req);
+        const result = await authService.handleLogin(user, role, res, req);
 
         res.status(200).json({
             success: true,
