@@ -59,7 +59,7 @@ const verifyAccessToken = (token) => {
     try {
         return jwt.verify(token, accessTokenSecret);
     } catch (error) {
-        console.error("Access token verification failed:", error.message);
+
         return null;
     }
 };

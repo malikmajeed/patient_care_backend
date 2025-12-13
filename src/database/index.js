@@ -24,8 +24,8 @@ const connectDB = async () => {
         require('../models');
 
         // if (config.server.environment === 'development' && config.database.autoSyncDb === "true") {
-        // WARNING: force: true will drop tables. Required for major refactor involving new Non-Null FKs.
-        await db.sync({ force: true });
+        // Changed back to alter: true to preserve data after initial schema fix.
+        await db.sync({ alter: true });
         console.log('Database models synchronized.');
     } catch (error) {
         console.error("Unable to connect to the database:", error);

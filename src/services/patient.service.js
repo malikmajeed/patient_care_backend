@@ -8,16 +8,16 @@ const { generatePatientId, generateUserId } = require("../utils/id_genrator.util
 
 // create patient
 // create patient
+const { db } = require("../database");
+
 const create = async (patientData) => {
+    const t = await db.transaction();
     try {
         const { error: userError } = userSchema.createUserSchema.validate(patientData);
         if (userError) {
             throw new Error(userError.details[0].message);
         }
-        const { error } = patientSchema.createPatientSchema.validate(patientData);
-        if (error) {
-            throw new Error(error.details[0].message);
-        }
+
 
         const isUserExist = await User.findOne({
             where: {
@@ -32,9 +32,9 @@ const create = async (patientData) => {
             throw new Error("User with this username or email already exists");
         }
 
+
         const userId = await generateUserId();
         const hashedPassword = await encryptPassword(patientData.password);
-
         // Create User
         const user = await User.create({
             user_ID: userId,
@@ -48,21 +48,41 @@ const create = async (patientData) => {
             profile_url: patientData.profile_url,
             role: 'patient',
             is_verified: true
-        });
+        }, { transaction: t });
+
 
         patientData.patient_ID = await generatePatientId();
-        patientData.user_ID = userId;
 
-        delete patientData.password;
-        delete patientData.email;
-        delete patientData.username;
-        delete patientData.first_name;
-        delete patientData.last_name;
-        delete patientData.gender;
-        delete patientData.phone_number;
-        delete patientData.profile_url;
+        // Before deleting fields, we need to extract them for return or validation if needed.
+        // But validation creates a new object if we check schema properly? 
+        // We modified patientData directly.
 
-        const patient = await Patient.create(patientData);
+        // Re-validate strictly for Patient parts if needed, but we already validated common user parts.
+        // patient_ID is required in createPatientSchema.
+        // We should construct a new object for validation to avoid mutating the original before we are done with it.
+        const patientPayload = {
+            ...patientData
+        };
+
+        const { error } = patientSchema.createPatientSchema.validate(patientPayload);
+        if (error) {
+            throw new Error(error.details[0].message);
+        }
+
+        // Prepare object for Patient Table
+        // Only keep fields that belong to PATIENT table
+        const patientTableData = {
+            patient_ID: patientData.patient_ID,
+            user_ID: userId,
+            address: patientData.address,
+            latitude: patientData.latitude,
+            longitude: patientData.longitude
+        };
+
+        const patient = await Patient.create(patientTableData, { transaction: t });
+
+        await t.commit();
+
         return {
             ...patient.toJSON(),
             email: user.email,
@@ -75,7 +95,11 @@ const create = async (patientData) => {
             role: 'patient'
         };
     } catch (error) {
-        throw new Error(error.message);
+        await t.rollback();
+        console.error("Error creating patient:", error);
+        // Clean up error message
+        const message = error.original?.message || error.message || "Validation error";
+        throw new Error(message);
     }
 }
 
@@ -229,7 +253,7 @@ const getAll = async () => {
 // get patient by id
 const getById = async (patientId) => {
     try {
-        const patient = await Patient.findByPk(patientId, {
+        const patient = await Patient.findOne({ where: { user_ID: patientId } }, {
             include: [{
                 model: User,
                 attributes: ['email', 'username', 'first_name', 'last_name', 'gender', 'phone_number', 'profile_url', 'is_verified', 'is_active']

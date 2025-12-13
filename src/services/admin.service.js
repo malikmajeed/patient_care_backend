@@ -11,11 +11,12 @@ const { generateAdminId, generateUserId } = require("../utils/id_genrator.utils"
 const create = async (adminData) => {
     try {
 
-        adminData.role = "superadmin"; // Default internal role if not provided? Schema says required.
+
         const { error: userError } = userSchema.createUserSchema.validate(adminData);
         if (userError) {
             throw new Error(userError.details[0].message);
         }
+        adminData.role = "superadmin"; // Default internal role if not provided? Schema says required.
         const { error } = adminSchema.createAdminSchema.validate(adminData);
         if (error) {
             throw new Error(error.details[0].message);

@@ -38,7 +38,7 @@ const authenticate = async (req, res, next) => {
 
         next();
     } catch (error) {
-        console.error("Authentication error:", error);
+
         return res.status(500).json({
             success: false,
             message: "Authentication failed",

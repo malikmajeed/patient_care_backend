@@ -15,7 +15,7 @@ const generateId = async (model, prefix, idField) => {
         }
 
         const lastId = lastRecord[idField];
-        const numericPartString = lastId.substring(2);
+        const numericPartString = lastId.substring(prefix.length);
         const numericPart = parseInt(numericPartString, 10);
 
         if (isNaN(numericPart)) {

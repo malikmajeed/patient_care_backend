@@ -13,7 +13,7 @@ const Session = db.define("SESSION", {
         allowNull: false
     },
     user_type: {
-        type: DataTypes.ENUM("admin", "patient"),
+        type: DataTypes.ENUM("admin", "patient", "nurse"),
         allowNull: false
     },
     refresh_token: {

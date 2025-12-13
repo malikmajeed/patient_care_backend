@@ -35,8 +35,9 @@ const clearAuthCookies = (res) => {
  */
 const handleLogin = async (user, userType, res, req) => {
     try {
-        // Generate token pair
+
         const { accessToken, refreshToken } = generateTokenPair(user, userType);
+
 
         // Get request info
         const requestInfo = {
@@ -52,7 +53,7 @@ const handleLogin = async (user, userType, res, req) => {
         setAuthCookies(res, accessToken, refreshToken);
 
         // Return user data (exclude sensitive info)
-        const userData = { ...user.toJSON() };
+        const userData = { ...user };
         delete userData.password;
         delete userData.password_hash;
 

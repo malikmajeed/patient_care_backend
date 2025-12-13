@@ -2,7 +2,10 @@ const authService = require("../services/auth.service");
 const patientService = require("../services/patient.service");
 const adminService = require("../services/admin.service");
 const nurseService = require("../services/nurse.service");
-
+const User = require("../models/user.model");
+const Patient = require("../models/patient.model");
+const Admin = require("../models/admin.model");
+const Nurse = require("../models/nurse.model");
 /**
  * Handle Signup based on role
  */
@@ -59,7 +62,7 @@ const login = async (req, res) => {
         // OR we try to find the User, check the role, and then fetch the profile.
 
         // Let's try to implement a smart login that detects the user type.
-        const { email, username, password } = req.body;
+        const { username, password } = req.body;
 
         // We can't use Service.login directly without knowing the service.
         // But we can use the User model directly!
@@ -71,10 +74,12 @@ const login = async (req, res) => {
             where: {
                 [Op.or]: [
                     { username: username || '' }, // if username provided
-                    { email: email || username || '' } // allow username field to be email
+                    { email: username || '' } // allow username field to be email
                 ]
             }
         });
+
+
 
         if (!user) {
             return res.status(401).json({ success: false, message: "Invalid credentials" });
@@ -88,10 +93,8 @@ const login = async (req, res) => {
         // Now fetch full profile based on role
         let fullProfile;
         if (user.role === 'patient') {
-            fullProfile = await patientService.getById(user.user_ID.replace('USR', 'PT')); // Wait, ID logic might differ? 
-            // Actually services use `where: { user_ID: user.user_ID }` in getById? 
-            // No, getById usually takes the PK of the profile (patient_ID).
-            // But we can add a method `getByUserId` to services or just use the relation here.
+            fullProfile = await patientService.getById(user.user_ID); // Wait, ID logic might differ? 
+
             const Patient = require("../models/patient.model");
             const patient = await Patient.findOne({ where: { user_ID: user.user_ID } });
             if (patient) fullProfile = { ...patient.toJSON(), ...user.toJSON() }; // merged
@@ -104,6 +107,8 @@ const login = async (req, res) => {
             const nurse = await Nurse.findOne({ where: { user_ID: user.user_ID } });
             if (nurse) fullProfile = { ...nurse.toJSON(), ...user.toJSON() };
         }
+
+
 
         // Clean up sensitive fields
         if (fullProfile) {

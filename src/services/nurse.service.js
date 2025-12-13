@@ -31,6 +31,7 @@ const create = async (nurseData) => {
         const user = await User.create({
             user_ID: userId,
             email: nurseData.email,
+            username: nurseData.username,
             password_hash: hashedPassword,
             first_name: nurseData.first_name,
             last_name: nurseData.last_name,
@@ -45,6 +46,7 @@ const create = async (nurseData) => {
 
         delete nurseData.password;
         delete nurseData.email;
+        delete nurseData.username;
         delete nurseData.first_name;
         delete nurseData.last_name;
         delete nurseData.gender;
