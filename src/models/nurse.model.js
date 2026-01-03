@@ -47,6 +47,14 @@ const Nurse = db.define("NURSE", {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: true
+    },
+    years_of_experience: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
+    hourly_rate: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: true
     }
 }, {
     freezeTableName: true

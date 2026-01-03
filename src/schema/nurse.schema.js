@@ -25,7 +25,9 @@ const updateNurseSchema = updateUserSchema.keys({
     avg_rating: Joi.number().min(0).max(5).optional(),
     latitude: Joi.number().optional(),
     longitude: Joi.number().optional(),
-    current_availability: Joi.boolean().optional()
+    current_availability: Joi.boolean().optional(),
+    years_of_experience: Joi.number().integer().min(0).optional(),
+    hourly_rate: Joi.number().min(0).optional()
 }).min(1);
 
 module.exports = {
