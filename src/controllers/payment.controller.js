@@ -77,12 +77,64 @@ const remove = async (req, res) => {
     }
 };
 
+const initiatePayment = async (req, res) => {
+    try {
+        const result = await paymentService.initiatePayment(req.body);
+        res.status(200).json({
+            success: true,
+            message: "Payment initiated successfully",
+            ...result
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
+const handlePaymentCallback = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const payment = await paymentService.handlePaymentCallback(id, req.body);
+        res.status(200).json({
+            success: true,
+            message: "Payment callback processed",
+            payment
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
+const getInvoice = async (req, res) => {
+    try {
+        const invoice = await paymentService.generateInvoice(req.params.id);
+        // In production, generate and return PDF
+        res.status(200).json({
+            success: true,
+            invoice
+        });
+    } catch (error) {
+        res.status(404).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
 module.exports = {
     create,
     getAll,
     getById,
     update,
-    remove
+    remove,
+    initiatePayment,
+    handlePaymentCallback,
+    getInvoice
 };
 
 

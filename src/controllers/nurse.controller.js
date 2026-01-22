@@ -1,6 +1,46 @@
 
 const nurseService = require("../services/nurse.service");
+const availabilityService = require("../services/availability.service");
 
+const getAvailability = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { date } = req.query;
+
+        if (!date) {
+            return res.status(400).json({
+                success: false,
+                error: 'Date parameter is required (format: YYYY-MM-DD)'
+            });
+        }
+
+        const availability = await availabilityService.getAvailability(id, date);
+        res.status(200).json({
+            success: true,
+            ...availability
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
+const searchNurses = async (req, res) => {
+    try {
+        const result = await nurseService.searchNurses(req.query);
+        res.status(200).json({
+            success: true,
+            ...result
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
 
 const update = async (req, res) => {
     try {
@@ -63,8 +103,28 @@ const remove = async (req, res) => {
     }
 };
 
+const updateVerificationStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const nurse = await nurseService.updateVerificationStatus(id, req.body);
+        res.status(200).json({
+            success: true,
+            message: "Verification status updated successfully",
+            nurse
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
 module.exports = {
+    searchNurses,
+    getAvailability,
     update,
+    updateVerificationStatus,
     getById,
     getAll,
     remove

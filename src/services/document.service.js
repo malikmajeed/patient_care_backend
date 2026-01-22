@@ -97,12 +97,26 @@ const remove = async (docId) => {
     }
 };
 
+// get documents by nurse ID
+const getByNurseId = async (nurseId) => {
+    try {
+        const documents = await Document.findAll({
+            where: { nurse_ID: nurseId },
+            order: [['createdAt', 'DESC']]
+        });
+        return documents;
+    } catch (error) {
+        throw new Error(`Failed to get documents by nurse ID: ${error.message}`);
+    }
+};
+
 module.exports = {
     create,
     getAll,
     getById,
     update,
-    remove
+    remove,
+    getByNurseId
 };
 
 

@@ -66,11 +66,44 @@ const deleteAdmin = async (req, res) => {
     }
 }
 
+const getDashboardStats = async (req, res) => {
+    try {
+        const stats = await adminService.getDashboardStats();
+        res.status(200).json({
+            success: true,
+            ...stats
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
+const getAnalytics = async (req, res) => {
+    try {
+        const { period } = req.query;
+        const analytics = await adminService.getAnalytics(period);
+        res.status(200).json({
+            success: true,
+            ...analytics
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
 const adminController = {
     update,
     getAllAdmins,
     getAdminById,
-    deleteAdmin
+    deleteAdmin,
+    getDashboardStats,
+    getAnalytics
 };
 
 module.exports = adminController;

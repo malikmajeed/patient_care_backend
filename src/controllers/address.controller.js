@@ -1,12 +1,12 @@
-const documentService = require("../services/document.service");
+const addressService = require("../services/address.service");
 
 const create = async (req, res) => {
     try {
-        const document = await documentService.create(req.body);
+        const address = await addressService.create(req.body);
         res.status(201).json({
             success: true,
-            message: "Document created successfully",
-            document
+            message: "Address created successfully",
+            address
         });
     } catch (error) {
         res.status(400).json({
@@ -16,12 +16,13 @@ const create = async (req, res) => {
     }
 };
 
-const getAll = async (req, res) => {
+const getByPatientId = async (req, res) => {
     try {
-        const documents = await documentService.getAll();
+        const { patientId } = req.params;
+        const addresses = await addressService.getByPatientId(patientId);
         res.status(200).json({
             success: true,
-            documents
+            addresses
         });
     } catch (error) {
         res.status(500).json({
@@ -33,10 +34,10 @@ const getAll = async (req, res) => {
 
 const getById = async (req, res) => {
     try {
-        const document = await documentService.getById(req.params.id);
+        const address = await addressService.getById(req.params.id);
         res.status(200).json({
             success: true,
-            document
+            address
         });
     } catch (error) {
         res.status(404).json({
@@ -48,11 +49,27 @@ const getById = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const document = await documentService.update(req.params.id, req.body);
+        const address = await addressService.update(req.params.id, req.body);
         res.status(200).json({
             success: true,
-            message: "Document updated successfully",
-            document
+            message: "Address updated successfully",
+            address
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
+const setDefault = async (req, res) => {
+    try {
+        const address = await addressService.setDefault(req.params.id);
+        res.status(200).json({
+            success: true,
+            message: "Default address set successfully",
+            address
         });
     } catch (error) {
         res.status(400).json({
@@ -64,10 +81,10 @@ const update = async (req, res) => {
 
 const remove = async (req, res) => {
     try {
-        await documentService.remove(req.params.id);
+        await addressService.remove(req.params.id);
         res.status(200).json({
             success: true,
-            message: "Document deleted successfully"
+            message: "Address deleted successfully"
         });
     } catch (error) {
         res.status(404).json({
@@ -77,29 +94,11 @@ const remove = async (req, res) => {
     }
 };
 
-const getByNurseId = async (req, res) => {
-    try {
-        const { nurseId } = req.params;
-        const documents = await documentService.getByNurseId(nurseId);
-        res.status(200).json({
-            success: true,
-            documents
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            error: error.message
-        });
-    }
-};
-
 module.exports = {
     create,
-    getAll,
+    getByPatientId,
     getById,
     update,
-    remove,
-    getByNurseId
+    setDefault,
+    remove
 };
-
-

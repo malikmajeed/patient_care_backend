@@ -1,6 +1,11 @@
-const { Op } = require("sequelize");
+const { Op, fn, col } = require("sequelize");
 const Admin = require("../models/admin.model");
 const User = require("../models/user.model");
+const Patient = require("../models/patient.model");
+const Nurse = require("../models/nurse.model");
+const Booking = require("../models/booking.model");
+const Payment = require("../models/payment.model");
+const Review = require("../models/review.model");
 const adminSchema = require("../schema/admin.schema");
 const userSchema = require("../schema/user.schema");
 const { encryptPassword, comparePassword } = require("../utils/encrypt_password.utils");
@@ -279,11 +284,148 @@ const deleteAdmin = async (adminId) => {
     }
 }
 
+// get dashboard statistics
+const getDashboardStats = async () => {
+    try {
+        const [
+            totalRevenue,
+            activeBookings,
+            pendingVerifications,
+            totalUsers,
+            totalNurses,
+            totalPatients
+        ] = await Promise.all([
+            // Total revenue from successful payments
+            Payment.sum('amount', {
+                where: { status: 'successful' }
+            }) || 0,
+            // Active bookings (confirmed or in_progress)
+            Booking.count({
+                where: {
+                    booking_status: {
+                        [Op.in]: ['confirmed', 'in_progress']
+                    }
+                }
+            }),
+            // Pending nurse verifications
+            Nurse.count({
+                where: { verification_status: 'pending' }
+            }),
+            // Total users
+            User.count(),
+            // Total nurses
+            Nurse.count(),
+            // Total patients
+            Patient.count()
+        ]);
+
+        return {
+            total_revenue: totalRevenue,
+            active_bookings: activeBookings,
+            pending_verifications: pendingVerifications,
+            total_users: totalUsers,
+            total_nurses: totalNurses,
+            total_patients: totalPatients
+        };
+    } catch (error) {
+        throw new Error(`Failed to get dashboard stats: ${error.message}`);
+    }
+};
+
+// get analytics data
+const getAnalytics = async (period = '30days') => {
+    try {
+        const now = new Date();
+        let startDate;
+        
+        switch (period) {
+            case '7days':
+                startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                break;
+            case '30days':
+                startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                break;
+            case '90days':
+                startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+                break;
+            default:
+                startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        }
+
+        // Revenue trends
+        const revenueTrends = await Payment.findAll({
+            where: {
+                status: 'successful',
+                transaction_date: {
+                    [Op.gte]: startDate
+                }
+            },
+            attributes: [
+                [fn('DATE', col('transaction_date')), 'date'],
+                [fn('SUM', col('amount')), 'total']
+            ],
+            group: [fn('DATE', col('transaction_date'))],
+            order: [[fn('DATE', col('transaction_date')), 'ASC']],
+            raw: true
+        });
+
+        // Booking status distribution
+        const bookingStatusDistribution = await Booking.findAll({
+            attributes: [
+                'booking_status',
+                [fn('COUNT', col('booking_ID')), 'count']
+            ],
+            group: ['booking_status'],
+            raw: true
+        });
+
+        // Top nurses by bookings
+        const topNurses = await Booking.findAll({
+            attributes: [
+                'nurse_ID',
+                [fn('COUNT', col('booking_ID')), 'booking_count']
+            ],
+            group: ['nurse_ID'],
+            order: [[fn('COUNT', col('booking_ID')), 'DESC']],
+            limit: 10,
+            raw: true
+        });
+
+        // New registrations
+        const newRegistrations = await User.findAll({
+            where: {
+                created_at: {
+                    [Op.gte]: startDate
+                }
+            },
+            attributes: [
+                [fn('DATE', col('created_at')), 'date'],
+                [fn('COUNT', col('user_ID')), 'count']
+            ],
+            group: [fn('DATE', col('created_at'))],
+            order: [[fn('DATE', col('created_at')), 'ASC']],
+            raw: true
+        });
+
+        return {
+            revenue_trends: revenueTrends,
+            booking_status_distribution: bookingStatusDistribution,
+            top_nurses: topNurses,
+            new_registrations: newRegistrations,
+            period
+        };
+    } catch (error) {
+        throw new Error(`Failed to get analytics: ${error.message}`);
+    }
+};
+
 module.exports = {
     create,
     login,
     update,
     getAll,
     getById,
-    deleteAdmin
+    deleteAdmin,
+    getDashboardStats,
+    getAnalytics
 };

@@ -65,6 +65,27 @@ router.get("/", documentController.getAll);
 
 /**
  * @swagger
+ * /documents/nurse/{nurseId}:
+ *   get:
+ *     summary: Get all documents for a nurse
+ *     tags: [Document]
+ *     parameters:
+ *       - in: path
+ *         name: nurseId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Nurse ID
+ *     responses:
+ *       200:
+ *         description: List of documents
+ *       500:
+ *         description: Server error
+ */
+router.get("/nurse/:nurseId", documentController.getByNurseId);
+
+/**
+ * @swagger
  * /document/{id}:
  *   get:
  *     summary: Get document by ID

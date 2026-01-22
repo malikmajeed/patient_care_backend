@@ -77,12 +77,83 @@ const remove = async (req, res) => {
     }
 };
 
+const bulkUpdate = async (req, res) => {
+    try {
+        const { nurseId } = req.params;
+        const { schedules } = req.body;
+
+        if (!schedules || !Array.isArray(schedules)) {
+            return res.status(400).json({
+                success: false,
+                error: 'Schedules array is required'
+            });
+        }
+
+        const updatedSchedules = await workScheduleService.bulkUpdate(nurseId, schedules);
+        res.status(200).json({
+            success: true,
+            message: "Work schedules updated successfully",
+            schedules: updatedSchedules
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
+const getNurseSchedule = async (req, res) => {
+    try {
+        const { nurseId } = req.params;
+        const schedules = await workScheduleService.getNurseSchedule(nurseId);
+        res.status(200).json({
+            success: true,
+            schedules
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
+const blockDate = async (req, res) => {
+    try {
+        const { nurseId } = req.params;
+        const { date, reason } = req.body;
+
+        if (!date) {
+            return res.status(400).json({
+                success: false,
+                error: 'Date is required'
+            });
+        }
+
+        const blocked = await workScheduleService.blockDate(nurseId, date, reason);
+        res.status(200).json({
+            success: true,
+            message: "Date blocked successfully",
+            blocked
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
 module.exports = {
     create,
     getAll,
     getById,
     update,
-    remove
+    remove,
+    bulkUpdate,
+    getNurseSchedule,
+    blockDate
 };
 
 

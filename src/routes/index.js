@@ -15,6 +15,8 @@ const workScheduleRoute = require("./work_schedule.route");
 const nurseSkillRoute = require("./nurse_skill.route");
 const requiredServiceRoute = require("./required_service.route");
 const uploadRoute = require("./upload.route");
+const addressRoute = require("./address.route");
+const notificationRoute = require("./notification.route");
 
 
 
@@ -32,6 +34,9 @@ router.use("/work-schedules", workScheduleRoute);
 router.use("/nurse-skills", nurseSkillRoute);
 router.use("/required-services", requiredServiceRoute);
 router.use("/upload", uploadRoute);
+router.use("/patients", addressRoute);
+router.use("/addresses", addressRoute);
+router.use("/notifications", notificationRoute);
 
 
 

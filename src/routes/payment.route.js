@@ -168,6 +168,99 @@ router.patch("/:id", paymentController.update);
  */
 router.delete("/:id", paymentController.remove);
 
+/**
+ * @swagger
+ * /payments/initiate:
+ *   post:
+ *     summary: Initiate payment for a booking
+ *     tags: [Payment]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - booking_ID
+ *               - payment_method
+ *               - amount
+ *             properties:
+ *               booking_ID:
+ *                 type: string
+ *                 maxLength: 6
+ *               payment_method:
+ *                 type: string
+ *                 enum: [jazzcash, easypaisa, cash, bank_transfer]
+ *               amount:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Payment initiated successfully
+ *       400:
+ *         description: Validation error
+ *       500:
+ *         description: Server error
+ */
+router.post("/initiate", paymentController.initiatePayment);
+
+/**
+ * @swagger
+ * /payments/{id}/callback:
+ *   post:
+ *     summary: Handle payment gateway callback/webhook
+ *     tags: [Payment]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Payment ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [success, failed, pending]
+ *               transaction_id:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Payment callback processed
+ *       400:
+ *         description: Validation error
+ *       500:
+ *         description: Server error
+ */
+router.post("/:id/callback", paymentController.handlePaymentCallback);
+
+/**
+ * @swagger
+ * /payments/{id}/invoice:
+ *   get:
+ *     summary: Get invoice for a payment
+ *     tags: [Payment]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Payment ID
+ *     responses:
+ *       200:
+ *         description: Invoice data
+ *       404:
+ *         description: Payment not found
+ *       500:
+ *         description: Server error
+ */
+router.get("/:id/invoice", paymentController.getInvoice);
+
 module.exports = router;
 
 

@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const WorkSchedule = require("../models/work_schedule.model");
 const workScheduleSchema = require("../schema/work_schedule.schema");
 const { generateWorkScheduleId } = require("../utils/uuid_generator.utils");
@@ -85,12 +86,84 @@ const remove = async (workId) => {
     }
 };
 
+// bulk update work schedules for a nurse
+const bulkUpdate = async (nurseId, schedules) => {
+    try {
+        // Delete existing schedules for this nurse
+        await WorkSchedule.destroy({
+            where: { nurse_ID: nurseId }
+        });
+
+        // Create new schedules
+        const createdSchedules = [];
+        for (const schedule of schedules) {
+            const work_id = await generateWorkScheduleId();
+            const newSchedule = await WorkSchedule.create({
+                work_id,
+                nurse_ID: nurseId,
+                day: schedule.day_of_week,
+                time_range: `${schedule.start_time}-${schedule.end_time}`
+            });
+            createdSchedules.push(newSchedule);
+        }
+
+        return createdSchedules;
+    } catch (error) {
+        throw new Error(`Failed to bulk update schedules: ${error.message}`);
+    }
+};
+
+// get nurse schedule
+const getNurseSchedule = async (nurseId) => {
+    try {
+        const schedules = await WorkSchedule.findAll({
+            where: { nurse_ID: nurseId },
+            order: [
+                ['day', 'ASC']
+            ]
+        });
+
+        // Format schedules
+        return schedules.map(schedule => {
+            const [startTime, endTime] = schedule.time_range.split('-');
+            return {
+                work_id: schedule.work_id,
+                day_of_week: schedule.day,
+                start_time: startTime,
+                end_time: endTime
+            };
+        });
+    } catch (error) {
+        throw new Error(`Failed to get nurse schedule: ${error.message}`);
+    }
+};
+
+// block date (create a model for blocked dates if needed, or use a simple approach)
+// For now, we'll create a simple blocked dates table
+const blockDate = async (nurseId, date, reason = '') => {
+    try {
+        // This would require a BlockedDate model
+        // For now, we'll return a placeholder
+        // In a full implementation, you'd create a BlockedDate record
+        return {
+            nurse_ID: nurseId,
+            blocked_date: date,
+            reason: reason
+        };
+    } catch (error) {
+        throw new Error(`Failed to block date: ${error.message}`);
+    }
+};
+
 module.exports = {
     create,
     getAll,
     getById,
     update,
-    remove
+    remove,
+    bulkUpdate,
+    getNurseSchedule,
+    blockDate
 };
 
 

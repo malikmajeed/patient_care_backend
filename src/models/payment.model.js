@@ -16,8 +16,16 @@ const Payment = db.define("PAYMENT", {
         allowNull: false
     },
     payment_method: {
-        type: DataTypes.ENUM("card", "cash", "bank_transfer", "wallet"),
+        type: DataTypes.ENUM("card", "cash", "bank_transfer", "wallet", "jazzcash", "easypaisa"),
         allowNull: false
+    },
+    transaction_ID: {
+        type: DataTypes.STRING(100),
+        allowNull: true
+    },
+    gateway_response: {
+        type: DataTypes.TEXT,
+        allowNull: true
     },
     status: {
         type: DataTypes.ENUM("pending", "successful", "failed"),

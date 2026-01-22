@@ -148,6 +148,114 @@ router.patch("/:id", workScheduleController.update);
  */
 router.delete("/:id", workScheduleController.remove);
 
+/**
+ * @swagger
+ * /work-schedules/bulk-update/{nurseId}:
+ *   post:
+ *     summary: Bulk update work schedules for a nurse
+ *     tags: [Work Schedule]
+ *     parameters:
+ *       - in: path
+ *         name: nurseId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Nurse ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - schedules
+ *             properties:
+ *               schedules:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - day_of_week
+ *                     - start_time
+ *                     - end_time
+ *                   properties:
+ *                     day_of_week:
+ *                       type: string
+ *                       enum: [monday, tuesday, wednesday, thursday, friday, saturday, sunday]
+ *                     start_time:
+ *                       type: string
+ *                       pattern: '^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$'
+ *                     end_time:
+ *                       type: string
+ *                       pattern: '^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$'
+ *     responses:
+ *       200:
+ *         description: Schedules updated successfully
+ *       400:
+ *         description: Validation error
+ *       500:
+ *         description: Server error
+ */
+router.post("/bulk-update/:nurseId", workScheduleController.bulkUpdate);
+
+/**
+ * @swagger
+ * /work-schedules/nurse/{nurseId}:
+ *   get:
+ *     summary: Get work schedule for a nurse
+ *     tags: [Work Schedule]
+ *     parameters:
+ *       - in: path
+ *         name: nurseId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Nurse ID
+ *     responses:
+ *       200:
+ *         description: Nurse schedule
+ *       500:
+ *         description: Server error
+ */
+router.get("/nurse/:nurseId", workScheduleController.getNurseSchedule);
+
+/**
+ * @swagger
+ * /work-schedules/block-date/{nurseId}:
+ *   post:
+ *     summary: Block a specific date for a nurse
+ *     tags: [Work Schedule]
+ *     parameters:
+ *       - in: path
+ *         name: nurseId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Nurse ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - date
+ *             properties:
+ *               date:
+ *                 type: string
+ *                 format: date
+ *               reason:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Date blocked successfully
+ *       400:
+ *         description: Validation error
+ *       500:
+ *         description: Server error
+ */
+router.post("/block-date/:nurseId", workScheduleController.blockDate);
+
 module.exports = router;
 
 

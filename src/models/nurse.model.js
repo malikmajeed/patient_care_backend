@@ -35,6 +35,11 @@ const Nurse = db.define("NURSE", {
         allowNull: true,
         defaultValue: 0
     },
+    total_reviews: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: 0
+    },
     latitude: {
         type: DataTypes.FLOAT,
         allowNull: true
