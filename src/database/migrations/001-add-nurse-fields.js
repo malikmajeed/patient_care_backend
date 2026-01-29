@@ -6,27 +6,35 @@
 'use strict';
 
 module.exports = {
-  async up(queryInterface, Sequelize) {
-    // Add years_of_experience column
-    await queryInterface.addColumn('NURSE', 'years_of_experience', {
-      type: Sequelize.INTEGER,
-      allowNull: true,
-      defaultValue: null
-    });
+  async up(queryInterface, { DataTypes, Sequelize }) {
+    const tableDescription = await queryInterface.describeTable('NURSE');
 
-    // Add hourly_rate column
-    await queryInterface.addColumn('NURSE', 'hourly_rate', {
-      type: Sequelize.DECIMAL(10, 2),
-      allowNull: true,
-      defaultValue: null
-    });
+    // Add years_of_experience column if it doesn't exist
+    if (!tableDescription.years_of_experience) {
+      await queryInterface.addColumn('NURSE', 'years_of_experience', {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: null
+      });
+    }
 
-    // Add total_reviews column
-    await queryInterface.addColumn('NURSE', 'total_reviews', {
-      type: Sequelize.INTEGER,
-      allowNull: true,
-      defaultValue: 0
-    });
+    // Add hourly_rate column if it doesn't exist
+    if (!tableDescription.hourly_rate) {
+      await queryInterface.addColumn('NURSE', 'hourly_rate', {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: true,
+        defaultValue: null
+      });
+    }
+
+    // Add total_reviews column if it doesn't exist
+    if (!tableDescription.total_reviews) {
+      await queryInterface.addColumn('NURSE', 'total_reviews', {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0
+      });
+    }
   },
 
   async down(queryInterface, Sequelize) {

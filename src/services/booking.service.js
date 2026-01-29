@@ -101,10 +101,14 @@ const createBookingRequest = async (bookingData) => {
 
         const { nurse_ID, booking_date, start_time, duration_hours } = bookingData;
 
+        // Convert booking_date to Date if it's a string
+        const bookingDate = booking_date instanceof Date ? booking_date : new Date(booking_date);
+        const dateString = bookingDate.toISOString().split('T')[0];
+
         // Check nurse availability
         const isAvailable = await availabilityService.checkSlotAvailability(
             nurse_ID,
-            booking_date.toISOString().split('T')[0],
+            dateString,
             start_time,
             duration_hours
         );
@@ -128,12 +132,12 @@ const createBookingRequest = async (bookingData) => {
 
         // Calculate end time
         const [startHour, startMin] = start_time.split(':').map(Number);
-        const endTime = new Date(booking_date);
+        const endTime = new Date(bookingDate);
         endTime.setHours(startHour + duration_hours, startMin, 0, 0);
         const end_time = endTime.toTimeString().slice(0, 5);
 
         // Create booked_datetime (combine date and start_time)
-        const booked_datetime = new Date(booking_date);
+        const booked_datetime = new Date(bookingDate);
         booked_datetime.setHours(startHour, startMin, 0, 0);
 
         // Generate unique booking ID

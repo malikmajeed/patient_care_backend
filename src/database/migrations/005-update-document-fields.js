@@ -6,19 +6,17 @@
 'use strict';
 
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface, { DataTypes, Sequelize }) {
     // Add issuing_authority column
     await queryInterface.addColumn('DOCUMENTS', 'issuing_authority', {
-      type: Sequelize.STRING,
-      allowNull: false,
-      defaultValue: ''
+      type: DataTypes.STRING,
+      allowNull: true
     });
 
     // Add issue_date column
     await queryInterface.addColumn('DOCUMENTS', 'issue_date', {
-      type: Sequelize.DATE,
-      allowNull: false,
-      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+      type: DataTypes.DATE,
+      allowNull: true
     });
   },
 

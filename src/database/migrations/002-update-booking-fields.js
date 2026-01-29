@@ -6,7 +6,7 @@
 'use strict';
 
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface, { DataTypes, Sequelize }) {
     // Update booking_status ENUM to include new statuses
     await queryInterface.sequelize.query(`
       ALTER TYPE "enum_BOOKING_booking_status" 
@@ -31,25 +31,25 @@ module.exports = {
 
     // Add start_time column
     await queryInterface.addColumn('BOOKING', 'start_time', {
-      type: Sequelize.TIME,
+      type: DataTypes.TIME,
       allowNull: true
     });
 
     // Add end_time column
     await queryInterface.addColumn('BOOKING', 'end_time', {
-      type: Sequelize.TIME,
+      type: DataTypes.TIME,
       allowNull: true
     });
 
     // Add duration_hours column
     await queryInterface.addColumn('BOOKING', 'duration_hours', {
-      type: Sequelize.DECIMAL(4, 2),
+      type: DataTypes.DECIMAL(4, 2),
       allowNull: true
     });
 
     // Add service_category_ID column
     await queryInterface.addColumn('BOOKING', 'service_category_ID', {
-      type: Sequelize.STRING(6),
+      type: DataTypes.STRING(6),
       allowNull: true,
       references: {
         model: 'SERVICE_CATEGORY',
@@ -59,7 +59,7 @@ module.exports = {
 
     // Add address_ID column
     await queryInterface.addColumn('BOOKING', 'address_ID', {
-      type: Sequelize.INTEGER,
+      type: DataTypes.INTEGER,
       allowNull: true,
       references: {
         model: 'PATIENT_ADDRESS',
@@ -69,32 +69,32 @@ module.exports = {
 
     // Add special_instructions column
     await queryInterface.addColumn('BOOKING', 'special_instructions', {
-      type: Sequelize.TEXT,
+      type: DataTypes.TEXT,
       allowNull: true
     });
 
     // Add emergency_contact column
     await queryInterface.addColumn('BOOKING', 'emergency_contact', {
-      type: Sequelize.STRING(20),
+      type: DataTypes.STRING(20),
       allowNull: true
     });
 
     // Add emergency_reported column
     await queryInterface.addColumn('BOOKING', 'emergency_reported', {
-      type: Sequelize.BOOLEAN,
+      type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false
     });
 
     // Add emergency_reported_at column
     await queryInterface.addColumn('BOOKING', 'emergency_reported_at', {
-      type: Sequelize.DATE,
+      type: DataTypes.DATE,
       allowNull: true
     });
 
     // Add emergency_details column
     await queryInterface.addColumn('BOOKING', 'emergency_details', {
-      type: Sequelize.TEXT,
+      type: DataTypes.TEXT,
       allowNull: true
     });
   },

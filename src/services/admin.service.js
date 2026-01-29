@@ -394,16 +394,16 @@ const getAnalytics = async (period = '30days') => {
         // New registrations
         const newRegistrations = await User.findAll({
             where: {
-                created_at: {
+                createdAt: {
                     [Op.gte]: startDate
                 }
             },
             attributes: [
-                [fn('DATE', col('created_at')), 'date'],
+                [fn('DATE', col('createdAt')), 'date'],
                 [fn('COUNT', col('user_ID')), 'count']
             ],
-            group: [fn('DATE', col('created_at'))],
-            order: [[fn('DATE', col('created_at')), 'ASC']],
+            group: [fn('DATE', col('createdAt'))],
+            order: [[fn('DATE', col('createdAt')), 'ASC']],
             raw: true
         });
 

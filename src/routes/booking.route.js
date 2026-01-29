@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const authMiddleware = require("../middlewares/auth.middleware");
 
 const bookingController = require("../controllers/booking.controller");
 
@@ -113,7 +114,7 @@ router.post("/", bookingController.create);
  *       500:
  *         description: Server error
  */
-router.post("/request", bookingController.createBookingRequest);
+router.post("/request", authMiddleware.authenticate, authMiddleware.isPatient, bookingController.createBookingRequest);
 
 /**
  * @swagger

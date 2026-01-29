@@ -69,6 +69,42 @@ router.get("/all", adminController.getAllAdmins);
 
 /**
  * @swagger
+ * /admins/dashboard/stats:
+ *   get:
+ *     summary: Get dashboard statistics
+ *     tags: [Admin]
+ *     responses:
+ *       200:
+ *         description: Dashboard statistics
+ *       500:
+ *         description: Server error
+ */
+router.get("/dashboard/stats", adminController.getDashboardStats);
+
+/**
+ * @swagger
+ * /admins/analytics:
+ *   get:
+ *     summary: Get analytics data
+ *     tags: [Admin]
+ *     parameters:
+ *       - in: query
+ *         name: period
+ *         schema:
+ *           type: string
+ *           enum: [7days, 30days, 90days]
+ *           default: 30days
+ *         description: Time period for analytics
+ *     responses:
+ *       200:
+ *         description: Analytics data
+ *       500:
+ *         description: Server error
+ */
+router.get("/analytics", adminController.getAnalytics);
+
+/**
+ * @swagger
  * /admin/{id}:
  *   get:
  *     summary: Get admin by ID
@@ -109,40 +145,6 @@ router.get("/:id", adminController.getAdminById);
  */
 router.delete("/:id", adminController.deleteAdmin);
 
-/**
- * @swagger
- * /admins/dashboard/stats:
- *   get:
- *     summary: Get dashboard statistics
- *     tags: [Admin]
- *     responses:
- *       200:
- *         description: Dashboard statistics
- *       500:
- *         description: Server error
- */
-router.get("/dashboard/stats", adminController.getDashboardStats);
-
-/**
- * @swagger
- * /admins/analytics:
- *   get:
- *     summary: Get analytics data
- *     tags: [Admin]
- *     parameters:
- *       - in: query
- *         name: period
- *         schema:
- *           type: string
- *           enum: [7days, 30days, 90days]
- *           default: 30days
- *         description: Time period for analytics
- *     responses:
- *       200:
- *         description: Analytics data
- *       500:
- *         description: Server error
- */
-router.get("/analytics", adminController.getAnalytics);
+// Dashboard and analytics routes moved above /:id route to avoid route conflicts
 
 module.exports = router;

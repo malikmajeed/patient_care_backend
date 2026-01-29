@@ -102,6 +102,9 @@ router.patch("/update/:id", nurseController.update);
  *       500:
  *         description: Server error
  */
+// Search route must come before /:id route to avoid matching "search" as an ID
+router.get("/search", nurseController.searchNurses);
+
 router.get("/:id", nurseController.getById);
 
 /**
@@ -219,7 +222,7 @@ router.get("/:id/availability", nurseController.getAvailability);
  *       500:
  *         description: Server error
  */
-router.get("/search", nurseController.searchNurses);
+// Search route moved above /:id route to avoid route conflicts
 
 /**
  * @swagger

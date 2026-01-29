@@ -6,16 +6,16 @@
 'use strict';
 
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface, { DataTypes, Sequelize }) {
     await queryInterface.createTable('NOTIFICATION', {
       notification_ID: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false
       },
       user_ID: {
-        type: Sequelize.STRING(10),
+        type: DataTypes.STRING(10),
         allowNull: false,
         references: {
           model: 'USER',
@@ -25,36 +25,36 @@ module.exports = {
         onDelete: 'CASCADE'
       },
       user_type: {
-        type: Sequelize.ENUM('admin', 'nurse', 'patient'),
+        type: DataTypes.ENUM('admin', 'nurse', 'patient'),
         allowNull: false
       },
       type: {
-        type: Sequelize.STRING(50),
+        type: DataTypes.STRING(50),
         allowNull: false
       },
       title: {
-        type: Sequelize.STRING(200),
+        type: DataTypes.STRING(200),
         allowNull: false
       },
       message: {
-        type: Sequelize.TEXT,
+        type: DataTypes.TEXT,
         allowNull: false
       },
       related_entity_type: {
-        type: Sequelize.STRING(50),
+        type: DataTypes.STRING(50),
         allowNull: true
       },
       related_entity_ID: {
-        type: Sequelize.STRING(50),
+        type: DataTypes.STRING(50),
         allowNull: true
       },
       is_read: {
-        type: Sequelize.BOOLEAN,
+        type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false
       },
       created_at: {
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
         allowNull: false,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }

@@ -11,7 +11,8 @@ const Booking = require("../models/booking.model");
 const getAvailability = async (nurseId, date) => {
     try {
         const targetDate = new Date(date);
-        const dayOfWeek = targetDate.toLocaleDateString('en-US', { weekday: 'lowercase' });
+        // Get day name and convert to lowercase (e.g., "monday", "tuesday")
+        const dayOfWeek = targetDate.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
 
         // Get nurse's work schedule for this day
         const workSchedule = await WorkSchedule.findOne({
