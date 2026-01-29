@@ -2,6 +2,10 @@ const addressService = require("../services/address.service");
 
 const create = async (req, res) => {
     try {
+        // Extract patientId from URL params and add to body
+        const { patientId } = req.params;
+        req.body.patient_ID = patientId;
+        
         const address = await addressService.create(req.body);
         res.status(201).json({
             success: true,

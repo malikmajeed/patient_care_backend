@@ -2,6 +2,11 @@ const bookingService = require("../services/booking.service");
 
 const createBookingRequest = async (req, res) => {
     try {
+        // Extract patient_ID from authenticated user
+        if (req.user && req.user.user_type === 'patient') {
+            req.body.patient_ID = req.user.user_id;
+        }
+        
         const booking = await bookingService.createBookingRequest(req.body);
         res.status(201).json({
             success: true,
