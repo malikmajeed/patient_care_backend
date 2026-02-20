@@ -203,6 +203,8 @@ router.delete("/:id", paymentController.remove);
  */
 router.post("/initiate", paymentController.initiatePayment);
 
+router.post("/create-intent", paymentController.createPaymentIntent);
+
 /**
  * @swagger
  * /payments/{id}/callback:

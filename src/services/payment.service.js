@@ -176,6 +176,49 @@ const handlePaymentCallback = async (paymentId, callbackData) => {
     }
 };
 
+// create Stripe PaymentIntent for card payment
+const createPaymentIntent = async (paymentData) => {
+    try {
+        const { booking_ID, amount } = paymentData;
+        const booking = await Booking.findByPk(booking_ID);
+        if (!booking) throw new Error('Booking not found');
+
+        const payment_ID = await generatePaymentId();
+        const amountNum = parseFloat(amount);
+        if (isNaN(amountNum) || amountNum <= 0) throw new Error('Invalid amount');
+
+        await Payment.create({
+            payment_ID,
+            booking_ID,
+            amount: amountNum,
+            payment_method: 'card',
+            transaction_date: new Date(),
+            status: 'pending',
+            transaction_details: JSON.stringify({ gateway: 'stripe', initiated_at: new Date().toISOString() })
+        });
+
+        const stripeSecret = process.env.STRIPE_SECRET_KEY;
+        if (!stripeSecret) {
+            return { payment_ID, clientSecret: null };
+        }
+
+        const Stripe = require('stripe');
+        const stripe = new Stripe(stripeSecret);
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: Math.round(amountNum * 100),
+            currency: 'usd',
+            metadata: { payment_ID, booking_ID }
+        });
+
+        return {
+            payment_ID,
+            clientSecret: paymentIntent.client_secret
+        };
+    } catch (error) {
+        throw new Error(`Failed to create payment intent: ${error.message}`);
+    }
+};
+
 // generate invoice PDF
 const generateInvoice = async (paymentId) => {
     try {
@@ -240,6 +283,7 @@ module.exports = {
     remove,
     initiatePayment,
     handlePaymentCallback,
+    createPaymentIntent,
     generateInvoice
 };
 

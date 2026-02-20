@@ -113,13 +113,28 @@ const handlePaymentCallback = async (req, res) => {
 const getInvoice = async (req, res) => {
     try {
         const invoice = await paymentService.generateInvoice(req.params.id);
-        // In production, generate and return PDF
         res.status(200).json({
             success: true,
             invoice
         });
     } catch (error) {
         res.status(404).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
+const createPaymentIntent = async (req, res) => {
+    try {
+        const result = await paymentService.createPaymentIntent(req.body);
+        res.status(200).json({
+            success: true,
+            payment_ID: result.payment_ID,
+            clientSecret: result.clientSecret
+        });
+    } catch (error) {
+        res.status(400).json({
             success: false,
             error: error.message
         });
@@ -134,6 +149,7 @@ module.exports = {
     remove,
     initiatePayment,
     handlePaymentCallback,
+    createPaymentIntent,
     getInvoice
 };
 
