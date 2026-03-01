@@ -1,6 +1,10 @@
 const express = require("express");
 const router = express.Router();
 
+router.use("/health", (req, res) => {
+    res.status(200).json({ status: 'ok', timestamp: new Date() });
+});
+
 // importing all routes
 const patientRoute = require("./patient.route");
 const adminRoute = require("./admin.route");
