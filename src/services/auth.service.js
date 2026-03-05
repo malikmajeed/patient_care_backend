@@ -21,8 +21,14 @@ const setAuthCookies = (res, accessToken, refreshToken) => {
  * @param {Object} res - Express response object
  */
 const clearAuthCookies = (res) => {
-    res.clearCookie("accessToken", { path: "/" });
-    res.clearCookie("refreshToken", { path: "/api/auth" });
+    const optsAccess = { path: "/" };
+    const optsRefresh = { path: "/api/auth" };
+    if (cookieConfig.accessToken.sameSite) optsAccess.sameSite = cookieConfig.accessToken.sameSite;
+    if (cookieConfig.accessToken.secure) optsAccess.secure = true;
+    if (cookieConfig.refreshToken.sameSite) optsRefresh.sameSite = cookieConfig.refreshToken.sameSite;
+    if (cookieConfig.refreshToken.secure) optsRefresh.secure = true;
+    res.clearCookie("accessToken", optsAccess);
+    res.clearCookie("refreshToken", optsRefresh);
 };
 
 /**

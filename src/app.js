@@ -10,10 +10,18 @@ const app = express();
 
 // Middlewares
 app.use(helmet());
-app.use(cors({
-    origin: process.env.CLIENT_URL,
-    credentials: true // Allow cookies to be sent
-}));
+// CORS: allow frontend origin(s). Use comma-separated for multiple (e.g. local + production).
+const clientOrigins = process.env.CLIENT_URL
+  ? process.env.CLIENT_URL.split(',').map((u) => u.trim()).filter(Boolean)
+  : ['http://localhost:3000'];
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || clientOrigins.includes(origin)) return callback(null, true);
+    callback(null, false);
+  },
+  credentials: true,
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser()); // Parse cookies
