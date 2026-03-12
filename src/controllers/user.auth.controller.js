@@ -56,6 +56,7 @@ const login = async (req, res) => {
         // Delegate business logic to user service
         const { user, role } = await userService.login({ username, password });
 
+        console.log('Login Function');
         // Handle Session & Cookies
         const result = await authService.handleLogin(user, role, res, req);
 

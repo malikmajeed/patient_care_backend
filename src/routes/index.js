@@ -6,6 +6,7 @@ router.use("/health", (req, res) => {
 });
 
 // importing all routes
+const authRoute = require("./user.auth.routes")
 const patientRoute = require("./patient.route");
 const adminRoute = require("./admin.route");
 const nurseRoute = require("./nurse.route");
