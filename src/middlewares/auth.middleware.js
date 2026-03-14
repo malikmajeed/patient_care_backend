@@ -3,12 +3,24 @@ const Admin = require("../models/admin.model");
 const Patient = require("../models/patient.model");
 
 /**
- * Middleware to authenticate requests using access token from cookies
+ * Get access token from request: cookie first (preferred), then Authorization Bearer header
+ */
+const getAccessToken = (req) => {
+    const fromCookie = req.cookies?.accessToken;
+    if (fromCookie) return fromCookie;
+    const authHeader = req.headers?.authorization;
+    if (authHeader && typeof authHeader === "string" && authHeader.toLowerCase().startsWith("bearer ")) {
+        return authHeader.slice(7).trim();
+    }
+    return null;
+};
+
+/**
+ * Middleware to authenticate requests using access token from cookies or Authorization header
  */
 const authenticate = async (req, res, next) => {
     try {
-        // Get access token from cookie
-        const accessToken = req.cookies?.accessToken;
+        const accessToken = getAccessToken(req);
 
         if (!accessToken) {
             return res.status(401).json({
@@ -148,7 +160,7 @@ const isResourceOwner = (req, res, next) => {
  */
 const optionalAuth = async (req, res, next) => {
     try {
-        const accessToken = req.cookies?.accessToken;
+        const accessToken = getAccessToken(req);
 
         if (accessToken) {
             const decoded = verifyAccessToken(accessToken);
