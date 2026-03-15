@@ -65,7 +65,8 @@ const handleLogin = async (user, userType, res, req) => {
 
         return {
             user: userData,
-            accessToken, // Optional: can be removed if only using cookies
+            accessToken,
+            refreshToken, // So frontend can store it for refresh when cross-origin cookies are blocked
             message: "Login successful"
         };
     } catch (error) {

@@ -65,6 +65,8 @@ const login = async (req, res) => {
             message: "Login successful",
             user: result.user,
             role: role,
+            accessToken: result.accessToken,
+            refreshToken: result.refreshToken,
         });
 
     } catch (error) {
@@ -102,7 +104,7 @@ const logout = async (req, res) => {
  */
 const refreshToken = async (req, res) => {
     try {
-        const refreshToken = req.cookies?.refreshToken;
+        const refreshToken = req.body?.refreshToken ?? req.cookies?.refreshToken;
         const result = await authService.handleRefreshToken(refreshToken, res);
 
         res.status(200).json({
